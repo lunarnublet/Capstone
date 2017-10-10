@@ -1,0 +1,15 @@
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\bin\Debug\AndroidApplication.dll
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\bin\Debug\AndroidApplication.pdb
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\bin\Debug\AndroidApplication.AndroidApplication.apk
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\bin\Debug\AndroidApplication.AndroidApplication-Signed.apk
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\AndroidApplication.csprojResolveAssemblyReference.cache
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\AndroidApplication.csproj.CoreCompileInputs.cache
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\AndroidApplication.dll
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\AndroidApplication.pdb
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\android\bin\AndroidApplication.AndroidApplication.apk
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\res\layout\main.xml
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\res\values\strings.xml
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\R.cs.flag
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\uploadflags.txt
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\bin\Debug\AndroidApplication.dll.mdb
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\android\assets\AndroidApplication.dll.mdb
