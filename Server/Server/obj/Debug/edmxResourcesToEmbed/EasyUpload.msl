@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="EasyUploadModelStoreContainer" CdmEntityContainer="EasyUploadEntities">
+    <EntitySetMapping Name="Phones">
+      <EntityTypeMapping TypeName="EasyUploadModel.Phone">
+        <MappingFragment StoreEntitySet="Phones">
+          <ScalarProperty Name="Ip" ColumnName="IP" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Desktops">
+      <EntityTypeMapping TypeName="EasyUploadModel.Desktop">
+        <MappingFragment StoreEntitySet="Desktops">
+          <ScalarProperty Name="Ip" ColumnName="Ip" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="PhoneToDesktops" TypeName="EasyUploadModel.PhoneToDesktops" StoreEntitySet="PhoneToDesktops">
+      <EndProperty Name="Phone">
+        <ScalarProperty Name="Id" ColumnName="PhoneId" />
+      </EndProperty>
+      <EndProperty Name="Desktop">
+        <ScalarProperty Name="Id" ColumnName="DesktopId" />
+      </EndProperty>
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping>

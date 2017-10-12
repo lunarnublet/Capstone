@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="EasyUploadModelStoreContainer" CdmEntityContainer="EasyUploadEntities">
+    <EntitySetMapping Name="Phones">
+      <EntityTypeMapping TypeName="EasyUploadModel.Phone">
+        <MappingFragment StoreEntitySet="Phones">
+          <ScalarProperty Name="IP" ColumnName="IP" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="EasyUploadModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Desktops">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Ip" Type="nvarchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Phones">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="IP" Type="nvarchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'easyupload-server.dbo.PhoneToDesktops' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="PhoneToDesktops">
+    <Key>
+      <PropertyRef Name="PhoneId" />
+      <PropertyRef Name="DesktopId" />
+    </Key>
+    <Property Name="PhoneId" Type="int" Nullable="false" />
+    <Property Name="DesktopId" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_PhoneToDesktops_Desktops">
+    <End Role="Desktops" Type="Self.Desktops" Multiplicity="1" />
+    <End Role="PhoneToDesktops" Type="Self.PhoneToDesktops" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Desktops">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PhoneToDesktops">
+        <PropertyRef Name="DesktopId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_PhoneToDesktops_Phones">
+    <End Role="Phones" Type="Self.Phones" Multiplicity="1" />
+    <End Role="PhoneToDesktops" Type="Self.PhoneToDesktops" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Phones">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="PhoneToDesktops">
+        <PropertyRef Name="PhoneId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="EasyUploadModelStoreContainer">
+    <EntitySet Name="Desktops" EntityType="Self.Desktops" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Phones" EntityType="Self.Phones" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PhoneToDesktops" EntityType="Self.PhoneToDesktops" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [PhoneToDesktops].[PhoneId] AS [PhoneId], 
+    [PhoneToDesktops].[DesktopId] AS [DesktopId]
+    FROM [dbo].[PhoneToDesktops] AS [PhoneToDesktops]</DefiningQuery>
+    </EntitySet>
+    <AssociationSet Name="FK_PhoneToDesktops_Desktops" Association="Self.FK_PhoneToDesktops_Desktops">
+      <End Role="Desktops" EntitySet="Desktops" />
+      <End Role="PhoneToDesktops" EntitySet="PhoneToDesktops" />
+    </AssociationSet>
+    <AssociationSet Name="FK_PhoneToDesktops_Phones" Association="Self.FK_PhoneToDesktops_Phones">
+      <End Role="Phones" EntitySet="Phones" />
+      <End Role="PhoneToDesktops" EntitySet="PhoneToDesktops" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
