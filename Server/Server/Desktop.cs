@@ -18,15 +18,15 @@ namespace Server
         public Desktop()
         {
             this.Phones = new HashSet<Phone>();
-            this.Pictures = new HashSet<Picture>();
+            this.Photos = new HashSet<Photo>();
         }
     
         public int Id { get; set; }
-        public string Ip { get; set; }
+        public string Code { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Phone> Phones { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Picture> Pictures { get; set; }
+        public virtual ICollection<Photo> Photos { get; set; }
     }
 }

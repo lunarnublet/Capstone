@@ -5,102 +5,95 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="EasyUploadModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Desktops">
+        <EntityType Name="Desktop">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Ip" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Code" Type="char" MaxLength="10" Nullable="false" />
         </EntityType>
-        <EntityType Name="Phones">
+        <EntityType Name="Phone">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="IP" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Code" Type="char" MaxLength="10" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'easyupload-server.dbo.PhoneToDesktops' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="PhoneToDesktops">
+warning 6002: The table/view 'easyupload-server.dbo.PhoneToDesktop' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="PhoneToDesktop">
           <Key>
+            <PropertyRef Name="DesktopId" />
             <PropertyRef Name="PhoneId" />
-            <PropertyRef Name="DesktopId" />
           </Key>
+          <Property Name="DesktopId" Type="int" Nullable="false" />
           <Property Name="PhoneId" Type="int" Nullable="false" />
-          <Property Name="DesktopId" Type="int" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'easyupload-server.dbo.Pictures' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="Pictures">
+        <EntityType Name="Photos">
           <Key>
-            <PropertyRef Name="DesktopId" />
-            <PropertyRef Name="Picture" />
+            <PropertyRef Name="Id" />
           </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="DesktopId" Type="int" Nullable="false" />
-          <Property Name="Picture" Type="text" Nullable="false" />
+          <Property Name="AsString" Type="text" Nullable="false" />
         </EntityType>
-        <Association Name="FK_PhoneToDesktops_Desktops">
-          <End Role="Desktops" Type="Self.Desktops" Multiplicity="1" />
-          <End Role="PhoneToDesktops" Type="Self.PhoneToDesktops" Multiplicity="*" />
+        <Association Name="FK_PhoneToDesktop_Desktop">
+          <End Role="Desktop" Type="Self.Desktop" Multiplicity="1" />
+          <End Role="PhoneToDesktop" Type="Self.PhoneToDesktop" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Desktops">
+            <Principal Role="Desktop">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="PhoneToDesktops">
+            <Dependent Role="PhoneToDesktop">
               <PropertyRef Name="DesktopId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_PhoneToDesktops_Phones">
-          <End Role="Phones" Type="Self.Phones" Multiplicity="1" />
-          <End Role="PhoneToDesktops" Type="Self.PhoneToDesktops" Multiplicity="*" />
+        <Association Name="FK_PhoneToDesktop_Phone">
+          <End Role="Phone" Type="Self.Phone" Multiplicity="1" />
+          <End Role="PhoneToDesktop" Type="Self.PhoneToDesktop" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Phones">
+            <Principal Role="Phone">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="PhoneToDesktops">
+            <Dependent Role="PhoneToDesktop">
               <PropertyRef Name="PhoneId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Pictures_Desktop">
-          <End Role="Desktops" Type="Self.Desktops" Multiplicity="1" />
-          <End Role="Pictures" Type="Self.Pictures" Multiplicity="*" />
+        <Association Name="FK_Photos_Desktop">
+          <End Role="Desktop" Type="Self.Desktop" Multiplicity="1" />
+          <End Role="Photos" Type="Self.Photos" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Desktops">
+            <Principal Role="Desktop">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Pictures">
+            <Dependent Role="Photos">
               <PropertyRef Name="DesktopId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="EasyUploadModelStoreContainer">
-          <EntitySet Name="Desktops" EntityType="Self.Desktops" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Phones" EntityType="Self.Phones" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="PhoneToDesktops" EntityType="Self.PhoneToDesktops" store:Type="Tables" store:Schema="dbo">
+          <EntitySet Name="Desktop" EntityType="Self.Desktop" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Phone" EntityType="Self.Phone" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Photos" EntityType="Self.Photos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PhoneToDesktop" EntityType="Self.PhoneToDesktop" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
-    [PhoneToDesktops].[PhoneId] AS [PhoneId], 
-    [PhoneToDesktops].[DesktopId] AS [DesktopId]
-    FROM [dbo].[PhoneToDesktops] AS [PhoneToDesktops]</DefiningQuery>
+    [PhoneToDesktop].[DesktopId] AS [DesktopId], 
+    [PhoneToDesktop].[PhoneId] AS [PhoneId]
+    FROM [dbo].[PhoneToDesktop] AS [PhoneToDesktop]</DefiningQuery>
           </EntitySet>
-          <EntitySet Name="Pictures" EntityType="Self.Pictures" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [Pictures].[DesktopId] AS [DesktopId], 
-    [Pictures].[Picture] AS [Picture]
-    FROM [dbo].[Pictures] AS [Pictures]</DefiningQuery>
-          </EntitySet>
-          <AssociationSet Name="FK_PhoneToDesktops_Desktops" Association="Self.FK_PhoneToDesktops_Desktops">
-            <End Role="Desktops" EntitySet="Desktops" />
-            <End Role="PhoneToDesktops" EntitySet="PhoneToDesktops" />
+          <AssociationSet Name="FK_PhoneToDesktop_Desktop" Association="Self.FK_PhoneToDesktop_Desktop">
+            <End Role="Desktop" EntitySet="Desktop" />
+            <End Role="PhoneToDesktop" EntitySet="PhoneToDesktop" />
           </AssociationSet>
-          <AssociationSet Name="FK_PhoneToDesktops_Phones" Association="Self.FK_PhoneToDesktops_Phones">
-            <End Role="Phones" EntitySet="Phones" />
-            <End Role="PhoneToDesktops" EntitySet="PhoneToDesktops" />
+          <AssociationSet Name="FK_PhoneToDesktop_Phone" Association="Self.FK_PhoneToDesktop_Phone">
+            <End Role="Phone" EntitySet="Phone" />
+            <End Role="PhoneToDesktop" EntitySet="PhoneToDesktop" />
           </AssociationSet>
-          <AssociationSet Name="FK_Pictures_Desktop" Association="Self.FK_Pictures_Desktop">
-            <End Role="Desktops" EntitySet="Desktops" />
-            <End Role="Pictures" EntitySet="Pictures" />
+          <AssociationSet Name="FK_Photos_Desktop" Association="Self.FK_Photos_Desktop">
+            <End Role="Desktop" EntitySet="Desktop" />
+            <End Role="Photos" EntitySet="Photos" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -108,56 +101,56 @@ warning 6002: The table/view 'easyupload-server.dbo.Pictures' does not have a pr
     <edmx:ConceptualModels>
       <Schema Namespace="EasyUploadModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="EasyUploadEntities" annotation:LazyLoadingEnabled="true" >
-          <EntitySet Name="Phones" EntityType="EasyUploadModel.Phone" />
           <EntitySet Name="Desktops" EntityType="EasyUploadModel.Desktop" />
-          <AssociationSet Name="PhoneToDesktops" Association="EasyUploadModel.PhoneToDesktops">
+          <EntitySet Name="Phones" EntityType="EasyUploadModel.Phone" />
+          <AssociationSet Name="PhoneToDesktop" Association="EasyUploadModel.PhoneToDesktop">
             <End Role="Desktop" EntitySet="Desktops" />
             <End Role="Phone" EntitySet="Phones" />
           </AssociationSet>
-          <EntitySet Name="Pictures" EntityType="EasyUploadModel.Picture" />
-          <AssociationSet Name="FK_Pictures_Desktop" Association="EasyUploadModel.FK_Pictures_Desktop">
+          <EntitySet Name="Photos" EntityType="EasyUploadModel.Photo" />
+          <AssociationSet Name="FK_Photos_Desktop" Association="EasyUploadModel.FK_Photos_Desktop">
             <End Role="Desktop" EntitySet="Desktops" />
-            <End Role="Picture" EntitySet="Pictures" />
+            <End Role="Photo" EntitySet="Photos" />
           </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Desktop">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Phones" Relationship="EasyUploadModel.PhoneToDesktop" FromRole="Desktop" ToRole="Phone" />
+          <NavigationProperty Name="Photos" Relationship="EasyUploadModel.FK_Photos_Desktop" FromRole="Desktop" ToRole="Photo" />
+        </EntityType>
         <EntityType Name="Phone">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
-          <Property Name="Ip" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Desktops" Relationship="EasyUploadModel.PhoneToDesktops" FromRole="Phone" ToRole="Desktop" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Desktops" Relationship="EasyUploadModel.PhoneToDesktop" FromRole="Phone" ToRole="Desktop" />
         </EntityType>
-        <EntityType Name="Desktop">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Ip" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Phones" Relationship="EasyUploadModel.PhoneToDesktops" FromRole="Desktop" ToRole="Phone" />
-          <NavigationProperty Name="Pictures" Relationship="EasyUploadModel.FK_Pictures_Desktop" FromRole="Desktop" ToRole="Picture" />
-        </EntityType>
-        <Association Name="PhoneToDesktops">
+        <Association Name="PhoneToDesktop">
           <End Type="EasyUploadModel.Desktop" Role="Desktop" Multiplicity="*" />
           <End Type="EasyUploadModel.Phone" Role="Phone" Multiplicity="*" />
         </Association>
-        <EntityType Name="Picture">
+        <EntityType Name="Photo">
           <Key>
-            <PropertyRef Name="DesktopId" />
-            <PropertyRef Name="AsString" />
+            <PropertyRef Name="Id" />
           </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="DesktopId" Type="Int32" Nullable="false" />
           <Property Name="AsString" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Desktop" Relationship="EasyUploadModel.FK_Pictures_Desktop" FromRole="Picture" ToRole="Desktop" />
+          <NavigationProperty Name="Desktop" Relationship="EasyUploadModel.FK_Photos_Desktop" FromRole="Photo" ToRole="Desktop" />
         </EntityType>
-        <Association Name="FK_Pictures_Desktop">
+        <Association Name="FK_Photos_Desktop">
           <End Type="EasyUploadModel.Desktop" Role="Desktop" Multiplicity="1" />
-          <End Type="EasyUploadModel.Picture" Role="Picture" Multiplicity="*" />
+          <End Type="EasyUploadModel.Photo" Role="Photo" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Desktop">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Picture">
+            <Dependent Role="Photo">
               <PropertyRef Name="DesktopId" />
             </Dependent>
           </ReferentialConstraint>
@@ -168,23 +161,23 @@ warning 6002: The table/view 'easyupload-server.dbo.Pictures' does not have a pr
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="EasyUploadModelStoreContainer" CdmEntityContainer="EasyUploadEntities" >
-          <EntitySetMapping Name="Phones">
-            <EntityTypeMapping TypeName="EasyUploadModel.Phone">
-              <MappingFragment StoreEntitySet="Phones">
-                <ScalarProperty Name="Ip" ColumnName="IP" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Desktops">
             <EntityTypeMapping TypeName="EasyUploadModel.Desktop">
-              <MappingFragment StoreEntitySet="Desktops">
-                <ScalarProperty Name="Ip" ColumnName="Ip" />
+              <MappingFragment StoreEntitySet="Desktop">
+                <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="PhoneToDesktops" TypeName="EasyUploadModel.PhoneToDesktops" StoreEntitySet="PhoneToDesktops">
+          <EntitySetMapping Name="Phones">
+            <EntityTypeMapping TypeName="EasyUploadModel.Phone">
+              <MappingFragment StoreEntitySet="Phone">
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="PhoneToDesktop" TypeName="EasyUploadModel.PhoneToDesktop" StoreEntitySet="PhoneToDesktop">
             <EndProperty Name="Phone">
               <ScalarProperty Name="Id" ColumnName="PhoneId" />
             </EndProperty>
@@ -192,11 +185,12 @@ warning 6002: The table/view 'easyupload-server.dbo.Pictures' does not have a pr
               <ScalarProperty Name="Id" ColumnName="DesktopId" />
             </EndProperty>
           </AssociationSetMapping>
-          <EntitySetMapping Name="Pictures">
-            <EntityTypeMapping TypeName="EasyUploadModel.Picture">
-              <MappingFragment StoreEntitySet="Pictures">
-                <ScalarProperty Name="AsString" ColumnName="Picture" />
+          <EntitySetMapping Name="Photos">
+            <EntityTypeMapping TypeName="EasyUploadModel.Photo">
+              <MappingFragment StoreEntitySet="Photos">
+                <ScalarProperty Name="AsString" ColumnName="AsString" />
                 <ScalarProperty Name="DesktopId" ColumnName="DesktopId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

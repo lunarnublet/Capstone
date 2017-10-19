@@ -1,31 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="EasyUploadModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
   <EntityContainer Name="EasyUploadEntities" annotation:LazyLoadingEnabled="true">
-    <EntitySet Name="Phones" EntityType="EasyUploadModel.Phone" />
     <EntitySet Name="Desktops" EntityType="EasyUploadModel.Desktop" />
-    <AssociationSet Name="PhoneToDesktops" Association="EasyUploadModel.PhoneToDesktops">
+    <EntitySet Name="Phones" EntityType="EasyUploadModel.Phone" />
+    <AssociationSet Name="PhoneToDesktop" Association="EasyUploadModel.PhoneToDesktop">
       <End Role="Desktop" EntitySet="Desktops" />
       <End Role="Phone" EntitySet="Phones" />
     </AssociationSet>
+    <EntitySet Name="Photos" EntityType="EasyUploadModel.Photo" />
+    <AssociationSet Name="FK_Photos_Desktop" Association="EasyUploadModel.FK_Photos_Desktop">
+      <End Role="Desktop" EntitySet="Desktops" />
+      <End Role="Photo" EntitySet="Photos" />
+    </AssociationSet>
   </EntityContainer>
+  <EntityType Name="Desktop">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Code" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
+    <NavigationProperty Name="Phones" Relationship="EasyUploadModel.PhoneToDesktop" FromRole="Desktop" ToRole="Phone" />
+    <NavigationProperty Name="Photos" Relationship="EasyUploadModel.FK_Photos_Desktop" FromRole="Desktop" ToRole="Photo" />
+  </EntityType>
   <EntityType Name="Phone">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" />
-    <Property Name="Ip" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <NavigationProperty Name="Desktops" Relationship="EasyUploadModel.PhoneToDesktops" FromRole="Phone" ToRole="Desktop" />
+    <Property Name="Code" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
+    <NavigationProperty Name="Desktops" Relationship="EasyUploadModel.PhoneToDesktop" FromRole="Phone" ToRole="Desktop" />
   </EntityType>
-  <EntityType Name="Desktop">
+  <Association Name="PhoneToDesktop">
+    <End Type="EasyUploadModel.Desktop" Role="Desktop" Multiplicity="*" />
+    <End Type="EasyUploadModel.Phone" Role="Phone" Multiplicity="*" />
+  </Association>
+  <EntityType Name="Photo">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Ip" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <NavigationProperty Name="Phones" Relationship="EasyUploadModel.PhoneToDesktops" FromRole="Desktop" ToRole="Phone" />
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="DesktopId" Type="Int32" Nullable="false" />
+    <Property Name="AsString" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Desktop" Relationship="EasyUploadModel.FK_Photos_Desktop" FromRole="Photo" ToRole="Desktop" />
   </EntityType>
-  <Association Name="PhoneToDesktops">
-    <End Type="EasyUploadModel.Desktop" Role="Desktop" Multiplicity="*" />
-    <End Type="EasyUploadModel.Phone" Role="Phone" Multiplicity="*" />
+  <Association Name="FK_Photos_Desktop">
+    <End Type="EasyUploadModel.Desktop" Role="Desktop" Multiplicity="1" />
+    <End Type="EasyUploadModel.Photo" Role="Photo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Desktop">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Photo">
+        <PropertyRef Name="DesktopId" />
+      </Dependent>
+    </ReferentialConstraint>
   </Association>
 </Schema>

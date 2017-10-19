@@ -4,8 +4,32 @@
     <EntitySetMapping Name="Phones">
       <EntityTypeMapping TypeName="EasyUploadModel.Phone">
         <MappingFragment StoreEntitySet="Phones">
-          <ScalarProperty Name="IP" ColumnName="IP" />
+          <ScalarProperty Name="Ip" ColumnName="IP" />
           <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Desktops">
+      <EntityTypeMapping TypeName="EasyUploadModel.Desktop">
+        <MappingFragment StoreEntitySet="Desktops">
+          <ScalarProperty Name="Ip" ColumnName="Ip" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="PhoneToDesktops" TypeName="EasyUploadModel.PhoneToDesktops" StoreEntitySet="PhoneToDesktops">
+      <EndProperty Name="Phone">
+        <ScalarProperty Name="Id" ColumnName="PhoneId" />
+      </EndProperty>
+      <EndProperty Name="Desktop">
+        <ScalarProperty Name="Id" ColumnName="DesktopId" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <EntitySetMapping Name="Pictures">
+      <EntityTypeMapping TypeName="EasyUploadModel.Picture">
+        <MappingFragment StoreEntitySet="Pictures">
+          <ScalarProperty Name="AsString" ColumnName="Picture" />
+          <ScalarProperty Name="DesktopId" ColumnName="DesktopId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

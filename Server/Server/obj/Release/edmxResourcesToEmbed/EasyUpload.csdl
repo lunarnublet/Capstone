@@ -2,12 +2,57 @@
 <Schema Namespace="EasyUploadModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
   <EntityContainer Name="EasyUploadEntities" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="Phones" EntityType="EasyUploadModel.Phone" />
+    <EntitySet Name="Desktops" EntityType="EasyUploadModel.Desktop" />
+    <AssociationSet Name="PhoneToDesktops" Association="EasyUploadModel.PhoneToDesktops">
+      <End Role="Desktop" EntitySet="Desktops" />
+      <End Role="Phone" EntitySet="Phones" />
+    </AssociationSet>
+    <EntitySet Name="Pictures" EntityType="EasyUploadModel.Picture" />
+    <AssociationSet Name="FK_Pictures_Desktop" Association="EasyUploadModel.FK_Pictures_Desktop">
+      <End Role="Desktop" EntitySet="Desktops" />
+      <End Role="Picture" EntitySet="Pictures" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="Phone">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" />
-    <Property Name="IP" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Ip" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Desktops" Relationship="EasyUploadModel.PhoneToDesktops" FromRole="Phone" ToRole="Desktop" />
   </EntityType>
+  <EntityType Name="Desktop">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Ip" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Phones" Relationship="EasyUploadModel.PhoneToDesktops" FromRole="Desktop" ToRole="Phone" />
+    <NavigationProperty Name="Pictures" Relationship="EasyUploadModel.FK_Pictures_Desktop" FromRole="Desktop" ToRole="Picture" />
+  </EntityType>
+  <Association Name="PhoneToDesktops">
+    <End Type="EasyUploadModel.Desktop" Role="Desktop" Multiplicity="*" />
+    <End Type="EasyUploadModel.Phone" Role="Phone" Multiplicity="*" />
+  </Association>
+  <EntityType Name="Picture">
+    <Key>
+      <PropertyRef Name="DesktopId" />
+      <PropertyRef Name="AsString" />
+    </Key>
+    <Property Name="DesktopId" Type="Int32" Nullable="false" />
+    <Property Name="AsString" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Desktop" Relationship="EasyUploadModel.FK_Pictures_Desktop" FromRole="Picture" ToRole="Desktop" />
+  </EntityType>
+  <Association Name="FK_Pictures_Desktop">
+    <End Type="EasyUploadModel.Desktop" Role="Desktop" Multiplicity="1" />
+    <End Type="EasyUploadModel.Picture" Role="Picture" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Desktop">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Picture">
+        <PropertyRef Name="DesktopId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>

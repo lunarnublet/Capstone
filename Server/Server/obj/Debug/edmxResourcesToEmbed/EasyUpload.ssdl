@@ -1,69 +1,94 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Schema Namespace="EasyUploadModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-  <EntityType Name="Desktops">
+  <EntityType Name="Desktop">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Ip" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Code" Type="char" MaxLength="10" Nullable="false" />
   </EntityType>
-  <EntityType Name="Phones">
+  <EntityType Name="Phone">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="IP" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Code" Type="char" MaxLength="10" Nullable="false" />
   </EntityType>
   <!--Errors Found During Generation:
-warning 6002: The table/view 'easyupload-server.dbo.PhoneToDesktops' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-  <EntityType Name="PhoneToDesktops">
+warning 6002: The table/view 'easyupload-server.dbo.PhoneToDesktop' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="PhoneToDesktop">
     <Key>
-      <PropertyRef Name="PhoneId" />
       <PropertyRef Name="DesktopId" />
+      <PropertyRef Name="PhoneId" />
     </Key>
-    <Property Name="PhoneId" Type="int" Nullable="false" />
     <Property Name="DesktopId" Type="int" Nullable="false" />
+    <Property Name="PhoneId" Type="int" Nullable="false" />
   </EntityType>
-  <Association Name="FK_PhoneToDesktops_Desktops">
-    <End Role="Desktops" Type="Self.Desktops" Multiplicity="1" />
-    <End Role="PhoneToDesktops" Type="Self.PhoneToDesktops" Multiplicity="*" />
+  <EntityType Name="Photos">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="DesktopId" Type="int" Nullable="false" />
+    <Property Name="AsString" Type="text" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_PhoneToDesktop_Desktop">
+    <End Role="Desktop" Type="Self.Desktop" Multiplicity="1" />
+    <End Role="PhoneToDesktop" Type="Self.PhoneToDesktop" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="Desktops">
+      <Principal Role="Desktop">
         <PropertyRef Name="Id" />
       </Principal>
-      <Dependent Role="PhoneToDesktops">
+      <Dependent Role="PhoneToDesktop">
         <PropertyRef Name="DesktopId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_PhoneToDesktops_Phones">
-    <End Role="Phones" Type="Self.Phones" Multiplicity="1" />
-    <End Role="PhoneToDesktops" Type="Self.PhoneToDesktops" Multiplicity="*" />
+  <Association Name="FK_PhoneToDesktop_Phone">
+    <End Role="Phone" Type="Self.Phone" Multiplicity="1" />
+    <End Role="PhoneToDesktop" Type="Self.PhoneToDesktop" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="Phones">
+      <Principal Role="Phone">
         <PropertyRef Name="Id" />
       </Principal>
-      <Dependent Role="PhoneToDesktops">
+      <Dependent Role="PhoneToDesktop">
         <PropertyRef Name="PhoneId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_Photos_Desktop">
+    <End Role="Desktop" Type="Self.Desktop" Multiplicity="1" />
+    <End Role="Photos" Type="Self.Photos" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Desktop">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Photos">
+        <PropertyRef Name="DesktopId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <EntityContainer Name="EasyUploadModelStoreContainer">
-    <EntitySet Name="Desktops" EntityType="Self.Desktops" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Phones" EntityType="Self.Phones" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="PhoneToDesktops" EntityType="Self.PhoneToDesktops" store:Type="Tables" store:Schema="dbo">
+    <EntitySet Name="Desktop" EntityType="Self.Desktop" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Phone" EntityType="Self.Phone" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Photos" EntityType="Self.Photos" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PhoneToDesktop" EntityType="Self.PhoneToDesktop" store:Type="Tables" store:Schema="dbo">
       <DefiningQuery>SELECT 
-    [PhoneToDesktops].[PhoneId] AS [PhoneId], 
-    [PhoneToDesktops].[DesktopId] AS [DesktopId]
-    FROM [dbo].[PhoneToDesktops] AS [PhoneToDesktops]</DefiningQuery>
+    [PhoneToDesktop].[DesktopId] AS [DesktopId], 
+    [PhoneToDesktop].[PhoneId] AS [PhoneId]
+    FROM [dbo].[PhoneToDesktop] AS [PhoneToDesktop]</DefiningQuery>
     </EntitySet>
-    <AssociationSet Name="FK_PhoneToDesktops_Desktops" Association="Self.FK_PhoneToDesktops_Desktops">
-      <End Role="Desktops" EntitySet="Desktops" />
-      <End Role="PhoneToDesktops" EntitySet="PhoneToDesktops" />
+    <AssociationSet Name="FK_PhoneToDesktop_Desktop" Association="Self.FK_PhoneToDesktop_Desktop">
+      <End Role="Desktop" EntitySet="Desktop" />
+      <End Role="PhoneToDesktop" EntitySet="PhoneToDesktop" />
     </AssociationSet>
-    <AssociationSet Name="FK_PhoneToDesktops_Phones" Association="Self.FK_PhoneToDesktops_Phones">
-      <End Role="Phones" EntitySet="Phones" />
-      <End Role="PhoneToDesktops" EntitySet="PhoneToDesktops" />
+    <AssociationSet Name="FK_PhoneToDesktop_Phone" Association="Self.FK_PhoneToDesktop_Phone">
+      <End Role="Phone" EntitySet="Phone" />
+      <End Role="PhoneToDesktop" EntitySet="PhoneToDesktop" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Photos_Desktop" Association="Self.FK_Photos_Desktop">
+      <End Role="Desktop" EntitySet="Desktop" />
+      <End Role="Photos" EntitySet="Photos" />
     </AssociationSet>
   </EntityContainer>
 </Schema>

@@ -5,7 +5,11 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="7b228c02178c49a2a2d19d28ec1ceac2" Name="Diagram1" >
-        <EntityTypeShape EntityType="EasyUploadModel.Phone" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="EasyUploadModel.Phone" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EasyUploadModel.Desktop" Width="1.5" PointX="3.375" PointY="0.75" />
+        <AssociationConnector Association="EasyUploadModel.PhoneToDesktops" />
+        <EntityTypeShape EntityType="EasyUploadModel.Picture" Width="1.5" PointX="5.625" PointY="0.875" />
+        <AssociationConnector Association="EasyUploadModel.FK_Pictures_Desktop" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

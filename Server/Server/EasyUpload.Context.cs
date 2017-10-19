@@ -25,8 +25,8 @@ namespace Server
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Phone> Phones { get; set; }
         public virtual DbSet<Desktop> Desktops { get; set; }
-        public virtual DbSet<Picture> Pictures { get; set; }
+        public virtual DbSet<Phone> Phones { get; set; }
+        public virtual DbSet<Photo> Photos { get; set; }
     }
 }

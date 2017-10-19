@@ -9,15 +9,17 @@
         android:id="@+id/MyButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Pick Image" />
+        android:text="Pick Image" 
+     />
      <TextView
-     android:id="@+id/MyTextView"
-     android:layout_width="fill_parent"
-     android:layout_height="wrap_content"
-     android:text="Pick Image" />
-    <ImageView
-        android:src="@android:drawable/ic_menu_gallery"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/imageView1" />
+          android:id="@+id/MyTextView"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:text="Pick Image" 
+      />
+      <ListView
+          android:id="@+id/MyListView"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+      />
 </LinearLayout>

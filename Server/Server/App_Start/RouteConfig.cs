@@ -16,13 +16,7 @@ namespace Server
             routes.MapRoute(
                 name: "NewPhone",
                 url: "newphone",
-                defaults: new { controller = "Home", action = "New" }
-            );
-
-            routes.MapRoute(
-                name: "PhoneIPChange",
-                url: "phoneipchange",
-                defaults: new { controller = "Home", action = "PhoneIPChange" }
+                defaults: new { controller = "Home", action = "NewPhone" }
             );
 
             routes.MapRoute(
@@ -43,11 +37,6 @@ namespace Server
                 defaults: new { controller = "Home", action = "NewDesktop" }
             );
 
-            routes.MapRoute(
-                name: "DesktopIPChange",
-                url: "desktopipchange",
-                defaults: new { controller = "Home", action = "DesktopIPChange" }
-            );
 
             routes.MapRoute(
                 name: "DesktopAlive",

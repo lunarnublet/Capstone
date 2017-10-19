@@ -175,7 +175,7 @@
     <Compile Include="Phone.cs">
       <DependentUpon>EasyUpload.tt</DependentUpon>
     </Compile>
-    <Compile Include="Picture.cs">
+    <Compile Include="Photo.cs">
       <DependentUpon>EasyUpload.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
