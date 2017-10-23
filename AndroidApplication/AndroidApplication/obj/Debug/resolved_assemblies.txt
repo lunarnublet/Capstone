@@ -3,6 +3,7 @@ D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplicati
 D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\android\assets\Mono.Android.dll
 D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\android\assets\System.Core.dll
 D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\android\assets\System.dll
+D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\android\assets\System.Web.Services.dll
 D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\android\assets\System.Xml.dll
 D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\android\assets\mscorlib.dll
 D:\Neumont\Q9\Capstone\FullCapstone\Capstone\AndroidApplication\AndroidApplication\obj\Debug\android\assets\System.Runtime.dll

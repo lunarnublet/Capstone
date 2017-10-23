@@ -28,6 +28,7 @@
     <EntitySetMapping Name="Photos">
       <EntityTypeMapping TypeName="EasyUploadModel.Photo">
         <MappingFragment StoreEntitySet="Photos">
+          <ScalarProperty Name="IsFinished" ColumnName="IsFinished" />
           <ScalarProperty Name="AsString" ColumnName="AsString" />
           <ScalarProperty Name="DesktopId" ColumnName="DesktopId" />
           <ScalarProperty Name="Id" ColumnName="Id" />

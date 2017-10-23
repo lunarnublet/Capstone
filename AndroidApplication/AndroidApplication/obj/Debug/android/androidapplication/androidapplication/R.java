@@ -11,9 +11,11 @@ public final class R {
     public static final class attr {
     }
     public static final class id {
-        public static final int MyButton=0x7f040000;
-        public static final int MyListView=0x7f040002;
+        public static final int AddConnectionButton=0x7f040002;
+        public static final int MyEditText=0x7f040003;
+        public static final int MyImage=0x7f040004;
         public static final int MyTextView=0x7f040001;
+        public static final int SelectPhotoButton=0x7f040000;
     }
     public static final class layout {
         public static final int main=0x7f020000;

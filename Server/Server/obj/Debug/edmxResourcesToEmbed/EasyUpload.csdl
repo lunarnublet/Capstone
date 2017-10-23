@@ -38,9 +38,10 @@
     <Key>
       <PropertyRef Name="Id" />
     </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="DesktopId" Type="Int32" Nullable="false" />
     <Property Name="AsString" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="IsFinished" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="Desktop" Relationship="EasyUploadModel.FK_Photos_Desktop" FromRole="Photo" ToRole="Desktop" />
   </EntityType>
   <Association Name="FK_Photos_Desktop">

@@ -12,6 +12,13 @@ namespace Server.Controllers
      {
           public string Index()
           {
+               //using (var dataContext = new EasyUploadEntities())
+               //using (var transaction = dataContext.Database.BeginTransaction())
+               //{
+
+               //     dataContext.Database.ExecuteSqlCommand("SET IDENTITY_INSERT [dbo].[Photos] ON");
+               //     transaction.Commit();
+               //}
                return "HelloWorld";
           }
 
@@ -28,14 +35,18 @@ namespace Server.Controllers
                return code;
           }
 
-          public string UploadPicture()
+          public string UploadPhoto()
           {
-               StreamReader reader = new StreamReader(Request.InputStream);
-               string body = reader.ReadToEnd();
-
+               string body = "";
+               foreach (string key in Request.Form.AllKeys) 
+               {
+                    body += Request.Form[key];
+               }
+               Photo photo = new Photo();
                using (var ctx = new EasyUploadEntities())
                {
                     string code = Request.Headers.Get("code");
+                    string isFinished = Request.Headers.Get("isfinished");
                     Phone phone = ctx.Phones.Where(s => s.Code == code).SingleOrDefault();
 
                     if (phone == null)
@@ -48,11 +59,55 @@ namespace Server.Controllers
                     }
                     foreach (Desktop desktop in phone.Desktops)
                     {
-                         ctx.Photos.Add(new Photo() { DesktopId = desktop.Id, AsString = body });
+                         photo.IsFinished = (isFinished == "1");
+                         photo.DesktopId = desktop.Id;
+                         photo.AsString = body;
+                         ctx.Photos.Add(photo);
                     }
                     ctx.SaveChanges();
                }
-               return "Picture Queued.";
+               return photo.Id.ToString();
+          }
+
+          public string AppendPhoto() 
+          {
+               string body = "";
+               foreach (string key in Request.Form.AllKeys)
+               {
+                    body += Request.Form[key];
+               }
+               using (var ctx = new EasyUploadEntities())
+               {
+                    string photoId = Request.Headers.Get("photoid");
+                    string isFinished = Request.Headers.Get("isfinished");
+                    Photo photo = ctx.Photos.Where(s => s.Id.ToString() == photoId).SingleOrDefault();
+                    
+                    if (photo == null)
+                    {
+                         return "Could not find photo with that Id.";
+                    }
+                    photo.AsString += body;
+                    photo.IsFinished = (isFinished == "1");
+                    ctx.SaveChanges();
+               }
+               return "Photo Appended.";
+          }
+
+          public string GetPhoto() 
+          {
+               Photo photo = new Photo();
+               using (var ctx = new EasyUploadEntities())
+               {
+                    string photoId = Request.Headers.Get("photoid");
+                    photo = ctx.Photos.Where(s => s.Id.ToString() == photoId).SingleOrDefault();
+
+                    if (photo == null)
+                    {
+                         return "Could not find photo with that Id.";
+                    }
+                    return photo.AsString;
+               }
+               return "idk";
           }
 
           public string PhoneAddConnection()

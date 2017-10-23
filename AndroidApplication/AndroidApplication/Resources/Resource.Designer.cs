@@ -44,14 +44,20 @@ namespace AndroidApplication
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f040000
-			public const int MyButton = 2130968576;
-			
 			// aapt resource value: 0x7f040002
-			public const int MyListView = 2130968578;
+			public const int AddConnectionButton = 2130968578;
+			
+			// aapt resource value: 0x7f040003
+			public const int MyEditText = 2130968579;
+			
+			// aapt resource value: 0x7f040004
+			public const int MyImage = 2130968580;
 			
 			// aapt resource value: 0x7f040001
 			public const int MyTextView = 2130968577;
+			
+			// aapt resource value: 0x7f040000
+			public const int SelectPhotoButton = 2130968576;
 			
 			static Id()
 			{

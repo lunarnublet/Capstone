@@ -13,12 +13,15 @@ using System.Threading.Tasks;
 using System.Net;
 using System.IO;
 using System.Net.NetworkInformation;
+using System.Collections.Specialized;
+using System.Web;
 
 namespace AndroidApplication
 {
      class Server
      {
           string url = "http://easyupload-server.azurewebsites.net/";
+          //string url = "http://localhost:18606/";
           Activity caller;
 
           public Server(Activity caller)
@@ -28,81 +31,176 @@ namespace AndroidApplication
 
           public void OnStart()
           {
+               string code = GetCode();
+
+               if (code == "")
+               {
+                    Register();
+               }
+          }
+
+          public void AddConnection(string connectionCode) 
+          {
+               string code = GetCode();
+               MakeAddConnectionCall(code, connectionCode);
+          }
+
+          public async Task<String> SendPhoto(string photo) 
+          {
+               string code = GetCode();
+               int maxChars = 200000;
+               int index = 0;
+               string photoId = "";
+               bool isfinished = false;
+               int totalsections = (photo.Length / maxChars) + 1;
+               int sectionon = 1;
+
+               if (photo.Length <= maxChars)
+               {
+                    isfinished = true;
+                    MakeSendPhotoCall(code, photo, isfinished);
+
+               }
+               else 
+               {
+                    caller.FindViewById<TextView>(Resource.Id.MyTextView).Text = sectionon + "/" + totalsections;
+                    string substring = photo.Substring(index, maxChars);
+                    photoId = await MakeSendPhotoCall(code, substring, isfinished);
+                    index = maxChars;
+
+                    while (index <= photo.Length)
+                    {
+                         ++sectionon;
+                         caller.FindViewById<TextView>(Resource.Id.MyTextView).Text = sectionon + "/" + totalsections;
+
+                         if (index + maxChars < photo.Length)
+                         {
+                              substring = photo.Substring(index, maxChars);
+                              isfinished = false;
+                         }
+                         else
+                         {
+                              substring = photo.Substring(index);
+                              isfinished = true;
+                         }
+                         await MakeAppendPhotoCall(photoId, substring, isfinished);
+                         index += maxChars;
+
+                    }
+
+               }
+               caller.FindViewById<TextView>(Resource.Id.MyTextView).Text = "done";
+
+
+               return photoId;
+          }
+
+          private string GetCode() 
+          {
                string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
                string filename = Path.Combine(path, "myfile.txt");
-               string currentIp = GetIPAddress().ToString();
-               string oldIp = ReadOldIp(filename);
-
-               if (oldIp != "")
-               {
-                    CheckIPChanged();
-               }
-               else
-               {
-                    Register(filename, currentIp);
-               }
+               string code = ReadCode(filename);
+               return code;
           }
 
-          public void On
-
-          private void CheckIPChanged() 
+          private async Task<string> Register() 
           {
-               string oldIp = ReadOldIp(filename);
-               if (oldIp != currentIp)
-               {
-
-                    MakeIPChangeCall(oldIp, currentIp);
-                    WriteCurrentIP(filename, currentIp);
-               }
+               string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+               string filename = Path.Combine(path, "myfile.txt");
+               string code = await MakeRegisterCall();
+               WriteCode(filename, code);
+               return code;
           }
 
-          private void Register(string filename, string currentIp) 
+          private string ReadCode(string filename)
           {
-               MakeRegisterCall(currentIp);
-               WriteCurrentIP(filename, currentIp);
-          }
-
-          private string ReadOldIp(string filename)
-          {
-               string oldIp = "";
+               string code = "";
                using (var streamReader = new StreamReader(filename))
                {
-                    oldIp = streamReader.ReadToEnd();
+                    code = streamReader.ReadToEnd();
                }
-               return oldIp;
+               return code;
           }
 
-          private void WriteCurrentIP(string filename, string currentIp)
+          private void WriteCode(string filename, string code)
           {
                using (var streamWriter = new StreamWriter(filename))
                {
-                    streamWriter.Write(currentIp, false);
+                    streamWriter.Write(code, false);
                }
           }
 
-          private void MakeAddDesktopCall(string currentIp, string desktopId) 
+          private void MakeAddConnectionCall(string code, string connectionCode) 
           {
                Dictionary<string, string> headers = new Dictionary<string, string>();
-               headers.Add("phoneip", currentIp);
-               headers.Add("desktopid", desktopId);
-               Call(url + "newphone", headers, "");
-          }
-          private void MakeRegisterCall(string currentIp)
-          {
-               Dictionary<string, string> headers = new Dictionary<string, string>();
-               headers.Add("ip", currentIp);
-               Call(url + "newphone", headers, "");
+               headers.Add("phoneCode", code);
+               headers.Add("desktopCode", connectionCode);
+               Call(url + "phoneaddconnection", headers, "");
           }
 
-          private void MakeIPChangeCall(string oldIp, string currentIp)
+          private async Task<string> MakeSendPhotoCall(string code, string photo, bool iscompleted)
           {
                Dictionary<string, string> headers = new Dictionary<string, string>();
-               headers.Add("newip", currentIp);
-               headers.Add("oldip", oldIp);
-               Call(url + "phoneipchange", headers, "");
+               headers.Add("code", code);
+               headers.Add("isfinished", iscompleted ? "1" : "0");
+               return await Call(url + "uploadphoto", headers, photo);
+          }
+          private async Task<string> MakeAppendPhotoCall(string photoid, string photo, bool iscompleted)
+          {
+               Dictionary<string, string> headers = new Dictionary<string, string>();
+               headers.Add("photoid", photoid);
+               headers.Add("isfinished", iscompleted ? "1" : "0");
+               return await Call(url + "appendphoto", headers, photo);
+          }
+
+          private async Task<string> MakeRegisterCall()
+          {
+               Dictionary<string, string> headers = new Dictionary<string, string>();
+               return await Call(url + "newphone", headers, "");
           }
 
           private async Task<string> Call(string url, Dictionary<string, string> headers, string body)
+          {
+               // Create an HTTP web request using the URL:
+               HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
+               request.Method = "POST";
+               request.ContentType = "application/x-www-form-urlencoded";
+               foreach (var key in headers.Keys)
+               {
+                    string value;
+                    headers.TryGetValue(key, out value);
+                    request.Headers[key] = value;
+               }
+
+               NameValueCollection outgoingQueryString = HttpUtility.ParseQueryString(String.Empty);
+               outgoingQueryString.Add("body", body);
+
+               string postdata = outgoingQueryString.ToString();
+               int v = postdata.Length;
+
+               Stream requestStream = request.GetRequestStream();
+               StreamWriter writer = new StreamWriter(requestStream);
+               writer.Write(postdata);
+               writer.Flush();
+               writer.Close();
+
+               // Send the request to the server and wait for the response:
+               using (WebResponse response = await request.GetResponseAsync())
+               {
+                    // Get a stream representation of the HTTP web response:
+                    using (Stream responseStream = response.GetResponseStream())
+                    {
+                         StreamReader reader = new StreamReader(responseStream);
+                         // Use this stream to build a JSON document object:
+                         string output = reader.ReadToEnd();
+
+                         // Return the JSON document:
+                         return output;
+                    }
+               }
+          }
+
+          private async Task<string> Call(string url, Dictionary<string, string> headers, byte[] body)
           {
                // Create an HTTP web request using the URL:
                HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
@@ -114,9 +212,12 @@ namespace AndroidApplication
                     request.Headers[key] = value;
                }
 
+
                Stream requestStream = request.GetRequestStream();
-               byte[] bytes = Encoding.ASCII.GetBytes(body);
-               requestStream.Write(bytes, 0, bytes.Length);
+               StreamWriter writer = new StreamWriter(requestStream);
+               writer.Write(body);
+               writer.Flush();
+               writer.Close();
 
                // Send the request to the server and wait for the response:
                using (WebResponse response = await request.GetResponseAsync())
@@ -134,18 +235,6 @@ namespace AndroidApplication
                     }
                }
           }
-
-          public IPAddress GetIPAddress()
-          {
-
-               foreach (IPAddress adress in Dns.GetHostAddresses(Dns.GetHostName()))
-               {
-                    return adress;
-               }
-
-               return null;
-          }
-
 
      }
 }

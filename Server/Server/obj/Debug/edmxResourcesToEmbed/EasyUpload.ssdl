@@ -14,8 +14,6 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Code" Type="char" MaxLength="10" Nullable="false" />
   </EntityType>
-  <!--Errors Found During Generation:
-warning 6002: The table/view 'easyupload-server.dbo.PhoneToDesktop' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
   <EntityType Name="PhoneToDesktop">
     <Key>
       <PropertyRef Name="DesktopId" />
@@ -28,9 +26,10 @@ warning 6002: The table/view 'easyupload-server.dbo.PhoneToDesktop' does not hav
     <Key>
       <PropertyRef Name="Id" />
     </Key>
-    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="DesktopId" Type="int" Nullable="false" />
     <Property Name="AsString" Type="text" Nullable="false" />
+    <Property Name="IsFinished" Type="bit" Nullable="false" />
   </EntityType>
   <Association Name="FK_PhoneToDesktop_Desktop">
     <End Role="Desktop" Type="Self.Desktop" Multiplicity="1" />
@@ -71,13 +70,8 @@ warning 6002: The table/view 'easyupload-server.dbo.PhoneToDesktop' does not hav
   <EntityContainer Name="EasyUploadModelStoreContainer">
     <EntitySet Name="Desktop" EntityType="Self.Desktop" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Phone" EntityType="Self.Phone" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PhoneToDesktop" EntityType="Self.PhoneToDesktop" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Photos" EntityType="Self.Photos" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="PhoneToDesktop" EntityType="Self.PhoneToDesktop" store:Type="Tables" store:Schema="dbo">
-      <DefiningQuery>SELECT 
-    [PhoneToDesktop].[DesktopId] AS [DesktopId], 
-    [PhoneToDesktop].[PhoneId] AS [PhoneId]
-    FROM [dbo].[PhoneToDesktop] AS [PhoneToDesktop]</DefiningQuery>
-    </EntitySet>
     <AssociationSet Name="FK_PhoneToDesktop_Desktop" Association="Self.FK_PhoneToDesktop_Desktop">
       <End Role="Desktop" EntitySet="Desktop" />
       <End Role="PhoneToDesktop" EntitySet="PhoneToDesktop" />
