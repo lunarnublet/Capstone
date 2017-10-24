@@ -42,7 +42,7 @@ namespace Server.Controllers
                {
                     body += Request.Form[key];
                }
-               Photo photo = new Photo();
+               string photocode = GenerateCode(10);
                using (var ctx = new EasyUploadEntities())
                {
                     string code = Request.Headers.Get("code");
@@ -59,14 +59,16 @@ namespace Server.Controllers
                     }
                     foreach (Desktop desktop in phone.Desktops)
                     {
+                         Photo photo = new Photo();
                          photo.IsFinished = (isFinished == "1");
                          photo.DesktopId = desktop.Id;
                          photo.AsString = body;
+                         photo.Code = photocode;
                          ctx.Photos.Add(photo);
                     }
                     ctx.SaveChanges();
                }
-               return photo.Id.ToString();
+               return photocode;
           }
 
           public string AppendPhoto() 
@@ -78,16 +80,20 @@ namespace Server.Controllers
                }
                using (var ctx = new EasyUploadEntities())
                {
-                    string photoId = Request.Headers.Get("photoid");
+                    string photoCode = Request.Headers.Get("photocode");
                     string isFinished = Request.Headers.Get("isfinished");
-                    Photo photo = ctx.Photos.Where(s => s.Id.ToString() == photoId).SingleOrDefault();
-                    
-                    if (photo == null)
+                    var photos = ctx.Photos.Where(s => s.Code == photoCode);
+
+                    if (photos.Count() == 0)
                     {
-                         return "Could not find photo with that Id.";
+                         return "Could not find any photos with that code.";
                     }
-                    photo.AsString += body;
-                    photo.IsFinished = (isFinished == "1");
+                    foreach (var photo in photos) 
+                    {
+                         photo.AsString += body;
+                         photo.IsFinished = (isFinished == "1");
+                    }
+
                     ctx.SaveChanges();
                }
                return "Photo Appended.";
@@ -151,7 +157,7 @@ namespace Server.Controllers
                string response = "";
                using (var ctx = new EasyUploadEntities())
                {
-                    string code = Request.Headers.Get("Code");
+                    string code = Request.Headers.Get("code");
                     var desktop = ctx.Desktops.Where(s => s.Code == code).SingleOrDefault();
                     if (desktop == null)
                     {
@@ -159,17 +165,12 @@ namespace Server.Controllers
                     }
                     else 
                     {
-                         var photos = ctx.Photos.Where(s => s.DesktopId.ToString() == Request.Headers.Get("id"));
-                         foreach (Photo photo in photos)
+                         var photo = ctx.Photos.Where(s => s.DesktopId == desktop.Id && s.IsFinished).FirstOrDefault();
+                         if (photo != null) 
                          {
-                              response += photo.AsString;
-                              if (photos.Last() != photo)
-                              {
-                                   response += ",";
-                              }
+                              response = photo.AsString;
                               ctx.Photos.Remove(photo);
                          }
-
                          ctx.SaveChanges();
                     }
                }
@@ -187,7 +188,8 @@ namespace Server.Controllers
                          code = NewCode(length);
                          int numDesktops = ctx.Desktops.Where(s => s.Code == code).ToArray().Length;
                          int numPhones = ctx.Phones.Where(s => s.Code == code).ToArray().Length;
-                         if (numPhones == 0 && numDesktops == 0) 
+                         int numPhotos = ctx.Photos.Where(s => s.Code == code).ToArray().Length;
+                         if (numPhones == 0 && numDesktops == 0 && numPhotos == 0) 
                          {
                               accepted = true;
                          }

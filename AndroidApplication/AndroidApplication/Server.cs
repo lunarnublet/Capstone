@@ -50,7 +50,7 @@ namespace AndroidApplication
                string code = GetCode();
                int maxChars = 200000;
                int index = 0;
-               string photoId = "";
+               string photocode = "";
                bool isfinished = false;
                int totalsections = (photo.Length / maxChars) + 1;
                int sectionon = 1;
@@ -58,14 +58,15 @@ namespace AndroidApplication
                if (photo.Length <= maxChars)
                {
                     isfinished = true;
-                    MakeSendPhotoCall(code, photo, isfinished);
+                    caller.FindViewById<TextView>(Resource.Id.MyTextView).Text = sectionon + "/" + totalsections;
+                    photocode = await MakeSendPhotoCall(code, photo, isfinished);
 
                }
                else 
                {
                     caller.FindViewById<TextView>(Resource.Id.MyTextView).Text = sectionon + "/" + totalsections;
                     string substring = photo.Substring(index, maxChars);
-                    photoId = await MakeSendPhotoCall(code, substring, isfinished);
+                    photocode = await MakeSendPhotoCall(code, substring, isfinished);
                     index = maxChars;
 
                     while (index <= photo.Length)
@@ -83,7 +84,7 @@ namespace AndroidApplication
                               substring = photo.Substring(index);
                               isfinished = true;
                          }
-                         await MakeAppendPhotoCall(photoId, substring, isfinished);
+                         await MakeAppendPhotoCall(photocode, substring, isfinished);
                          index += maxChars;
 
                     }
@@ -92,7 +93,7 @@ namespace AndroidApplication
                caller.FindViewById<TextView>(Resource.Id.MyTextView).Text = "done";
 
 
-               return photoId;
+               return photocode;
           }
 
           private string GetCode() 
@@ -145,10 +146,10 @@ namespace AndroidApplication
                headers.Add("isfinished", iscompleted ? "1" : "0");
                return await Call(url + "uploadphoto", headers, photo);
           }
-          private async Task<string> MakeAppendPhotoCall(string photoid, string photo, bool iscompleted)
+          private async Task<string> MakeAppendPhotoCall(string photocode, string photo, bool iscompleted)
           {
                Dictionary<string, string> headers = new Dictionary<string, string>();
-               headers.Add("photoid", photoid);
+               headers.Add("photocode", photocode);
                headers.Add("isfinished", iscompleted ? "1" : "0");
                return await Call(url + "appendphoto", headers, photo);
           }
@@ -161,7 +162,6 @@ namespace AndroidApplication
 
           private async Task<string> Call(string url, Dictionary<string, string> headers, string body)
           {
-               // Create an HTTP web request using the URL:
                HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
                request.Method = "POST";
                request.ContentType = "application/x-www-form-urlencoded";
@@ -184,17 +184,13 @@ namespace AndroidApplication
                writer.Flush();
                writer.Close();
 
-               // Send the request to the server and wait for the response:
                using (WebResponse response = await request.GetResponseAsync())
                {
-                    // Get a stream representation of the HTTP web response:
                     using (Stream responseStream = response.GetResponseStream())
                     {
                          StreamReader reader = new StreamReader(responseStream);
-                         // Use this stream to build a JSON document object:
                          string output = reader.ReadToEnd();
 
-                         // Return the JSON document:
                          return output;
                     }
                }

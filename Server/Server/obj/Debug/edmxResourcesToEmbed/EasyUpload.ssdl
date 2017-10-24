@@ -30,6 +30,7 @@
     <Property Name="DesktopId" Type="int" Nullable="false" />
     <Property Name="AsString" Type="text" Nullable="false" />
     <Property Name="IsFinished" Type="bit" Nullable="false" />
+    <Property Name="Code" Type="char" MaxLength="10" Nullable="false" />
   </EntityType>
   <Association Name="FK_PhoneToDesktop_Desktop">
     <End Role="Desktop" Type="Self.Desktop" Multiplicity="1" />

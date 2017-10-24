@@ -18,6 +18,7 @@ namespace Server
         public int DesktopId { get; set; }
         public string AsString { get; set; }
         public bool IsFinished { get; set; }
+        public string Code { get; set; }
     
         public virtual Desktop Desktop { get; set; }
     }

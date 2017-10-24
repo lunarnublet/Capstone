@@ -35,6 +35,7 @@
           <Property Name="DesktopId" Type="int" Nullable="false" />
           <Property Name="AsString" Type="text" Nullable="false" />
           <Property Name="IsFinished" Type="bit" Nullable="false" />
+          <Property Name="Code" Type="char" MaxLength="10" Nullable="false" />
         </EntityType>
         <Association Name="FK_PhoneToDesktop_Desktop">
           <End Role="Desktop" Type="Self.Desktop" Multiplicity="1" />
@@ -136,6 +137,7 @@
           <Property Name="DesktopId" Type="Int32" Nullable="false" />
           <Property Name="AsString" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="IsFinished" Type="Boolean" Nullable="false" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="Desktop" Relationship="EasyUploadModel.FK_Photos_Desktop" FromRole="Photo" ToRole="Desktop" />
         </EntityType>
         <Association Name="FK_Photos_Desktop">
@@ -183,6 +185,7 @@
           <EntitySetMapping Name="Photos">
             <EntityTypeMapping TypeName="EasyUploadModel.Photo">
               <MappingFragment StoreEntitySet="Photos">
+                <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="IsFinished" ColumnName="IsFinished" />
                 <ScalarProperty Name="AsString" ColumnName="AsString" />
                 <ScalarProperty Name="DesktopId" ColumnName="DesktopId" />
