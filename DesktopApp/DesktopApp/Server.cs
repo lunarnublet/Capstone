@@ -78,7 +78,7 @@ namespace DesktopApp
                     string photoas64 = Call(url + "desktopalive", headers, "");
                     if (photoas64 != "") 
                     {
-                         WriteBitmap("D:\\", photoas64);
+                         WriteBitmap("D:\\test\\", photoas64);
                     }
                     Thread.Sleep(1000);
                }
