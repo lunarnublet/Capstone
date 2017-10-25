@@ -26,6 +26,12 @@ namespace Server
                );
 
                routes.MapRoute(
+                    name: "GetPhotoLength",
+                    url: "getphotolength",
+                    defaults: new { controller = "Home", action = "GetPhotoLength" }
+               );
+
+               routes.MapRoute(
                    name: "UploadPhoto",
                    url: "uploadphoto",
                    defaults: new { controller = "Home", action = "UploadPhoto" }

@@ -33,7 +33,7 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="DesktopId" Type="int" Nullable="false" />
-          <Property Name="AsString" Type="text" Nullable="false" />
+          <Property Name="FileName" Type="text" Nullable="false" />
           <Property Name="IsFinished" Type="bit" Nullable="false" />
           <Property Name="Code" Type="char" MaxLength="10" Nullable="false" />
         </EntityType>
@@ -135,7 +135,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="DesktopId" Type="Int32" Nullable="false" />
-          <Property Name="AsString" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FileName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="IsFinished" Type="Boolean" Nullable="false" />
           <Property Name="Code" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="Desktop" Relationship="EasyUploadModel.FK_Photos_Desktop" FromRole="Photo" ToRole="Desktop" />
@@ -187,7 +187,7 @@
               <MappingFragment StoreEntitySet="Photos">
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="IsFinished" ColumnName="IsFinished" />
-                <ScalarProperty Name="AsString" ColumnName="AsString" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
                 <ScalarProperty Name="DesktopId" ColumnName="DesktopId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

@@ -44,6 +44,7 @@ namespace DesktopApp
                     writer.Flush();
                     writer.Close();
                }
+
                StartAliveCalls();
           }
 
@@ -93,7 +94,7 @@ namespace DesktopApp
           public string Call(string url, Dictionary<string, string> headers, string body = "")
           {
                HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
-               request.Method = "POST";
+               request.Method = "GET";
                request.ContentType = "application/x-www-form-urlencoded";
                foreach (var key in headers.Keys)
                {
@@ -101,18 +102,6 @@ namespace DesktopApp
                     headers.TryGetValue(key, out value);
                     request.Headers[key] = value;
                }
-
-               NameValueCollection outgoingQueryString = HttpUtility.ParseQueryString(String.Empty);
-               outgoingQueryString.Add("body", body);
-
-               string postdata = outgoingQueryString.ToString();
-               int v = postdata.Length;
-
-               Stream requestStream = request.GetRequestStream();
-               StreamWriter writer = new StreamWriter(requestStream);
-               writer.Write(postdata);
-               writer.Flush();
-               writer.Close();
 
                using (WebResponse response = request.GetResponse())
                {

@@ -30,7 +30,7 @@
         <MappingFragment StoreEntitySet="Photos">
           <ScalarProperty Name="Code" ColumnName="Code" />
           <ScalarProperty Name="IsFinished" ColumnName="IsFinished" />
-          <ScalarProperty Name="AsString" ColumnName="AsString" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
           <ScalarProperty Name="DesktopId" ColumnName="DesktopId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>

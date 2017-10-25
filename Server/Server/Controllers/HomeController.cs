@@ -12,13 +12,13 @@ namespace Server.Controllers
      {
           public string Index()
           {
-               //using (var dataContext = new EasyUploadEntities())
-               //using (var transaction = dataContext.Database.BeginTransaction())
-               //{
+               using (var dataContext = new EasyUploadEntities())
+               using (var transaction = dataContext.Database.BeginTransaction())
+               {
 
-               //     dataContext.Database.ExecuteSqlCommand("SET IDENTITY_INSERT [dbo].[Photos] ON");
-               //     transaction.Commit();
-               //}
+                    dataContext.Database.ExecuteSqlCommand("SET IDENTITY_INSERT [dbo].[Photos] ON");
+                    transaction.Commit();
+               }
                return "HelloWorld";
           }
 
@@ -62,9 +62,12 @@ namespace Server.Controllers
                          Photo photo = new Photo();
                          photo.IsFinished = (isFinished == "1");
                          photo.DesktopId = desktop.Id;
-                         photo.AsString = body;
+                         photo.FileName = DateTime.Now.ToFileTime().ToString() + ".txt";
+                         string filepath = Server.MapPath("~/" + photo.FileName);
                          photo.Code = photocode;
                          ctx.Photos.Add(photo);
+
+                         WriteFile(filepath, body);
                     }
                     ctx.SaveChanges();
                }
@@ -90,7 +93,8 @@ namespace Server.Controllers
                     }
                     foreach (var photo in photos) 
                     {
-                         photo.AsString += body;
+                         string filepath = Server.MapPath("~/" + photo.FileName);
+                         WriteFile(filepath, body);
                          photo.IsFinished = (isFinished == "1");
                     }
 
@@ -111,7 +115,9 @@ namespace Server.Controllers
                     {
                          return "Could not find photo with that Id.";
                     }
-                    return photo.AsString;
+                    string filepath = Server.MapPath("~/" + photo.FileName);
+                    return ReadFile(filepath);
+
                }
                return "idk";
           }
@@ -168,13 +174,40 @@ namespace Server.Controllers
                          var photo = ctx.Photos.Where(s => s.DesktopId == desktop.Id && s.IsFinished).FirstOrDefault();
                          if (photo != null) 
                          {
-                              response = photo.AsString;
+                              string filepath = Server.MapPath("~/" + photo.FileName);
+                              response = ReadFile(filepath);
                               ctx.Photos.Remove(photo);
+                              DeleteFile(filepath);
                          }
                          ctx.SaveChanges();
                     }
                }
                return response;
+          }
+
+          private void DeleteFile(string filepath)
+          {
+               if (System.IO.File.Exists(filepath)) 
+               {
+                    System.IO.File.Delete(filepath);
+               }
+          }
+
+          private string ReadFile(string filepath) 
+          {
+               StreamReader reader = new StreamReader(filepath);
+               string content = reader.ReadToEnd();
+               reader.Close();
+               return content;
+          }
+
+          private void WriteFile(string filepath, string content) 
+          {
+               FileStream fileStream  = new FileStream(filepath, FileMode.Append);
+               StreamWriter writer = new StreamWriter(fileStream);
+               writer.Write(content);
+               writer.Flush();
+               writer.Close();
           }
 
           private string GenerateCode(int length) 
