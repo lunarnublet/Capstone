@@ -44,20 +44,26 @@ namespace AndroidApplication
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f040002
-			public const int AddConnectionButton = 2130968578;
+			// aapt resource value: 0x7f040004
+			public const int AddConnectionButton = 2130968580;
+			
+			// aapt resource value: 0x7f040005
+			public const int MyEditText = 2130968581;
 			
 			// aapt resource value: 0x7f040003
-			public const int MyEditText = 2130968579;
+			public const int MyTextView = 2130968579;
 			
-			// aapt resource value: 0x7f040004
-			public const int MyImage = 2130968580;
-			
-			// aapt resource value: 0x7f040001
-			public const int MyTextView = 2130968577;
+			// aapt resource value: 0x7f040002
+			public const int SelectPhotoButton = 2130968578;
 			
 			// aapt resource value: 0x7f040000
-			public const int SelectPhotoButton = 2130968576;
+			public const int image = 2130968576;
+			
+			// aapt resource value: 0x7f040006
+			public const int mylistview = 2130968582;
+			
+			// aapt resource value: 0x7f040001
+			public const int text = 2130968577;
 			
 			static Id()
 			{
@@ -73,7 +79,10 @@ namespace AndroidApplication
 		{
 			
 			// aapt resource value: 0x7f020000
-			public const int Main = 2130837504;
+			public const int ListView_Row = 2130837504;
+			
+			// aapt resource value: 0x7f020001
+			public const int Main = 2130837505;
 			
 			static Layout()
 			{

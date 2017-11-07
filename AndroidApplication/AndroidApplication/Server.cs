@@ -22,9 +22,9 @@ namespace AndroidApplication
      {
           string url = "http://easyupload-server.azurewebsites.net/";
           //string url = "http://localhost:18606/";
-          Activity caller;
+          MainActivity caller;
 
-          public Server(Activity caller)
+          public Server(MainActivity caller)
           {
                this.caller = caller;
           }
@@ -45,7 +45,7 @@ namespace AndroidApplication
                MakeAddConnectionCall(code, connectionCode);
           }
 
-          public async Task<String> SendPhoto(string photo) 
+          public async Task<String> SendPhoto(string photo, int i) 
           {
                string code = GetCode();
                int maxChars = 200000;
@@ -58,13 +58,14 @@ namespace AndroidApplication
                if (photo.Length <= maxChars)
                {
                     isfinished = true;
-                    caller.FindViewById<TextView>(Resource.Id.MyTextView).Text = sectionon + "/" + totalsections;
+                    caller.SetListViewText(i, "1/1");
                     photocode = await MakeSendPhotoCall(code, photo, isfinished);
 
                }
                else 
                {
-                    caller.FindViewById<TextView>(Resource.Id.MyTextView).Text = sectionon + "/" + totalsections;
+                    caller.SetListViewText(i, sectionon + "/" + totalsections);
+
                     string substring = photo.Substring(index, maxChars);
                     photocode = await MakeSendPhotoCall(code, substring, isfinished);
                     index = maxChars;
@@ -72,7 +73,8 @@ namespace AndroidApplication
                     while (index <= photo.Length)
                     {
                          ++sectionon;
-                         caller.FindViewById<TextView>(Resource.Id.MyTextView).Text = sectionon + "/" + totalsections;
+                         caller.SetListViewText(i, sectionon + "/" + totalsections);
+
 
                          if (index + maxChars < photo.Length)
                          {
@@ -90,7 +92,8 @@ namespace AndroidApplication
                     }
 
                }
-               caller.FindViewById<TextView>(Resource.Id.MyTextView).Text = "done";
+               caller.SetListViewText(i, "DONE");
+
 
 
                return photocode;

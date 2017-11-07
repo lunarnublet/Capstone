@@ -5,8 +5,55 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesktopApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="Easy Upload" Height="350" Width="650" Background="White">
+     <Grid>
+          <TextBox Name="FilePathTextBox" HorizontalAlignment="Left" Height="24" TextWrapping="NoWrap" Text="Ex. 'D:\YourFolderName'" VerticalAlignment="Top" Width="200" Margin="95,9,0,0" 
+               BorderThickness="2.5,0,0,1"
+               BorderBrush="#505050"
+          />
+          <Button Name="FilePathButton" Content="Change Directory" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Margin="300,9,0,0" Click="ChangeDirectoryClick" Height="24"
+               
+          />
+          <Button Name="FolderBrowserDialog" Content="Select Folder" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="10,9,0,0" Click="SelectFolderClick" Height="24"/>
+          <!--<Button Content="Refresh" HorizontalAlignment="Left" Margin="393,9,0,0" VerticalAlignment="Top" Width="75" Click="RefreshClick"/>-->
+
+          <ScrollViewer Name="SelectionScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="0,40,0,0" Background="White" HorizontalAlignment="Left" Width="150">
+               <ListView
+                    Name="ListDirectories"
+                    SelectionMode="Single"
+                    IsSynchronizedWithCurrentItem="True"
+                    Background="Aqua">
+                    <!--<ListView.ContextMenu>
+                         <ContextMenu>
+                              <MenuItem Command="ApplicationCommands.New" Executed="NewCommand_Executed" CanExecute="NewCommand_CanExecute" Header="Remove">
+                              </MenuItem>
+                         </ContextMenu>
+                    </ListView.ContextMenu>-->
+               </ListView>
+          </ScrollViewer>
+          <ScrollViewer Name="ScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="150, 40, 0 0" Background="#282828">
+               <WrapPanel Name="ImagePanel" VerticalAlignment="Top" HorizontalAlignment="Left" MinWidth="250" Width="{Binding ElementName=ScrollViewer, Path=ViewportWidth}">
+
+               </WrapPanel>
+
+               <!--<ItemsControl x:Name="activitiesControl" Margin="10">
+                    <ItemsControl.Template>
+                         <ControlTemplate>
+                              <WrapPanel  Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" 
+                    FlowDirection="LeftToRight" IsItemsHost="true">
+                              </WrapPanel>
+                         </ControlTemplate>
+                    </ItemsControl.Template>
+                    <ItemsControl.ItemTemplate>
+                         <DataTemplate>
+                              <Button Style="{DynamicResource ActionButton}" HorizontalAlignment="Right" Margin="5" 
+                Content="{Binding Value}" Width="200" 
+                Command="{Binding Path=ViewModel.ActionTypeCommand, 
+                    RelativeSource={RelativeSource Mode=FindAncestor,     
+                AncestorType=local:CustomerEditView}}" CommandParameter="{Binding Key}"/>
+                         </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+               </ItemsControl>-->
+          </ScrollViewer>
+     </Grid>
 </Window>

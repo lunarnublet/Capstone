@@ -30,10 +30,16 @@
           android:text="Nothing Yet"
       />
 
-     <ImageView
+     <!--<ImageView
           android:id="@+id/MyImage"
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
-      />
+      />-->
+
+     <ListView 
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/mylistview"
+     />
 
 </LinearLayout>

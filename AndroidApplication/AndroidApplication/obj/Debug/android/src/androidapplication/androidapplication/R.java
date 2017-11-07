@@ -11,14 +11,17 @@ public final class R {
     public static final class attr {
     }
     public static final class id {
-        public static final int AddConnectionButton=0x7f040002;
-        public static final int MyEditText=0x7f040003;
-        public static final int MyImage=0x7f040004;
-        public static final int MyTextView=0x7f040001;
-        public static final int SelectPhotoButton=0x7f040000;
+        public static final int AddConnectionButton=0x7f040004;
+        public static final int MyEditText=0x7f040005;
+        public static final int MyTextView=0x7f040003;
+        public static final int SelectPhotoButton=0x7f040002;
+        public static final int image=0x7f040000;
+        public static final int mylistview=0x7f040006;
+        public static final int text=0x7f040001;
     }
     public static final class layout {
-        public static final int main=0x7f020000;
+        public static final int listview_row=0x7f020000;
+        public static final int main=0x7f020001;
     }
     public static final class string {
         public static final int app_name=0x7f030000;

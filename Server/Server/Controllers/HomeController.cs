@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
 using System.IO;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace Server.Controllers
 {
@@ -26,7 +28,7 @@ namespace Server.Controllers
           {
                string code = "";
                using (var ctx = new EasyUploadEntities())
-               {    
+               {
                     code = GenerateCode(10);
                     ctx.Phones.Add(new Phone() { Code = code });
                     ctx.SaveChanges();
@@ -38,7 +40,7 @@ namespace Server.Controllers
           public string UploadPhoto()
           {
                string body = "";
-               foreach (string key in Request.Form.AllKeys) 
+               foreach (string key in Request.Form.AllKeys)
                {
                     body += Request.Form[key];
                }
@@ -53,7 +55,7 @@ namespace Server.Controllers
                     {
                          return "Could not find phone with that code.";
                     }
-                    else if (phone.Desktops.Count == 0) 
+                    else if (phone.Desktops.Count == 0)
                     {
                          return "No Desktops to send to.";
                     }
@@ -74,7 +76,7 @@ namespace Server.Controllers
                return photocode;
           }
 
-          public string AppendPhoto() 
+          public string AppendPhoto()
           {
                string body = "";
                foreach (string key in Request.Form.AllKeys)
@@ -91,7 +93,7 @@ namespace Server.Controllers
                     {
                          return "Could not find any photos with that code.";
                     }
-                    foreach (var photo in photos) 
+                    foreach (var photo in photos)
                     {
                          string filepath = Server.MapPath("~/" + photo.FileName);
                          WriteFile(filepath, body);
@@ -103,7 +105,7 @@ namespace Server.Controllers
                return "Photo Appended.";
           }
 
-          public string GetPhoto() 
+          public string GetPhoto()
           {
                Photo photo = new Photo();
                using (var ctx = new EasyUploadEntities())
@@ -135,7 +137,7 @@ namespace Server.Controllers
                     {
                          return "Could not find phone with that code.";
                     }
-                    else if (desktop == null) 
+                    else if (desktop == null)
                     {
                          return "Could not find desktop with that code.";
                     }
@@ -169,10 +171,10 @@ namespace Server.Controllers
                     {
                          response = "Could not find desktop with that code.";
                     }
-                    else 
+                    else
                     {
                          var photo = ctx.Photos.Where(s => s.DesktopId == desktop.Id && s.IsFinished).FirstOrDefault();
-                         if (photo != null) 
+                         if (photo != null)
                          {
                               string filepath = Server.MapPath("~/" + photo.FileName);
                               response = ReadFile(filepath);
@@ -187,30 +189,81 @@ namespace Server.Controllers
 
           private void DeleteFile(string filepath)
           {
-               if (System.IO.File.Exists(filepath)) 
+               if (System.IO.File.Exists(filepath))
                {
                     System.IO.File.Delete(filepath);
                }
           }
 
-          private string ReadFile(string filepath) 
+          private string ReadFile(string filepath)
           {
-               StreamReader reader = new StreamReader(filepath);
-               string content = reader.ReadToEnd();
-               reader.Close();
+               byte[] bytes = DecryptFile(filepath);
+               string content = Encoding.ASCII.GetString(bytes);
                return content;
           }
 
-          private void WriteFile(string filepath, string content) 
+          private void WriteFile(string filepath, string content)
           {
-               FileStream fileStream  = new FileStream(filepath, FileMode.Append);
-               StreamWriter writer = new StreamWriter(fileStream);
-               writer.Write(content);
-               writer.Flush();
-               writer.Close();
+               byte[] bytes = Encoding.ASCII.GetBytes(content);
+               EncryptFile(bytes, filepath);
           }
 
-          private string GenerateCode(int length) 
+          private byte[] DecryptFile(string filepath)
+          {
+               string password = @"myKey123"; // Your Key Here
+
+               UnicodeEncoding UE = new UnicodeEncoding();
+               byte[] key = UE.GetBytes(password);
+
+               FileStream fsCrypt = new FileStream(filepath, FileMode.Open);
+
+               RijndaelManaged RMCrypto = new RijndaelManaged();
+
+               CryptoStream cs = new CryptoStream(fsCrypt,
+                   RMCrypto.CreateDecryptor(key, key),
+                   CryptoStreamMode.Read);
+
+               int data;
+               List<byte> bytes = new List<byte>();
+               while ((data = cs.ReadByte()) != -1)
+               {
+                    bytes.Add((byte)data);
+               }
+
+               cs.Close();
+               fsCrypt.Close();
+               return bytes.ToArray();
+
+          }
+
+          private void EncryptFile(byte[] data, string filepath)
+          {
+
+               string password = @"myKey123"; // Your Key Here
+               UnicodeEncoding UE = new UnicodeEncoding();
+               byte[] key = UE.GetBytes(password);
+
+               string cryptFile = filepath;
+               FileStream fsCrypt = new FileStream(cryptFile, FileMode.Create);
+
+               RijndaelManaged RMCrypto = new RijndaelManaged();
+
+               CryptoStream cs = new CryptoStream(fsCrypt,
+                   RMCrypto.CreateEncryptor(key, key),
+                   CryptoStreamMode.Write);
+
+
+               foreach (byte byt in data)
+               {
+                    cs.WriteByte(byt);
+               }
+
+
+               cs.Close();
+               fsCrypt.Close();
+          }
+
+          private string GenerateCode(int length)
           {
                bool accepted = false;
                string code = "";
@@ -222,7 +275,7 @@ namespace Server.Controllers
                          int numDesktops = ctx.Desktops.Where(s => s.Code == code).ToArray().Length;
                          int numPhones = ctx.Phones.Where(s => s.Code == code).ToArray().Length;
                          int numPhotos = ctx.Photos.Where(s => s.Code == code).ToArray().Length;
-                         if (numPhones == 0 && numDesktops == 0 && numPhotos == 0) 
+                         if (numPhones == 0 && numDesktops == 0 && numPhotos == 0)
                          {
                               accepted = true;
                          }
@@ -232,17 +285,17 @@ namespace Server.Controllers
                return code;
           }
 
-          private string NewCode(int length) 
+          private string NewCode(int length)
           {
 
                Random random = new Random();
                string code = "";
 
-               while (code.Length < length) 
+               while (code.Length < length)
                {
                     int type = random.Next(0, 3);
                     char c = ' ';
-                    switch (type) 
+                    switch (type)
                     {
                          case 0:
                               c = (char)random.Next(48, 57);
