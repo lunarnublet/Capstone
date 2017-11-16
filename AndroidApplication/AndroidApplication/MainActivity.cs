@@ -18,10 +18,11 @@ using System.IO.Compression;
 
 namespace AndroidApplication
 {
-     [Activity(Label = "AndroidApplication", MainLauncher = true)]
+     [Activity(Label = "Easy Upload", MainLauncher = true, Theme = "@android:style/Theme.NoTitleBar")]
      public class MainActivity : Activity
      {
           public static readonly int PickImageId = 1000;
+          public static readonly int AddConnectionRequestCode = 100;
           MyListViewAdapter adapter;
           private List<Android.Net.Uri> uris;
 
@@ -79,10 +80,8 @@ namespace AndroidApplication
                //intent.PutExtra(Intent.ExtraAllowMultiple, true);
                //intent.SetAction(Intent.ActionGetContent);
                //StartActivityForResult(Intent.CreateChooser(intent, "Select Picture"), PickImageId);
-               string s = FindViewById<EditText>(Resource.Id.MyEditText).Text;
-               FindViewById<TextView>(Resource.Id.MyTextView).Text = s;
-
-               server.AddConnection(s);
+               
+               StartActivityForResult(typeof(AddConnection), AddConnectionRequestCode);
           }
 
           protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
@@ -102,8 +101,24 @@ namespace AndroidApplication
                               uris.Add(item);
                          }
                     }
-                    FindViewById<TextView>(Resource.Id.MyTextView).Text = "Converting Uris: " + uris.Count;
                     ConvertUris();
+               }
+               else if (requestCode == AddConnectionRequestCode && (resultCode == Result.Ok) && (data != null)) 
+               {
+                    string code = data.Extras.GetString("code");
+                    AddConnection(code);
+               }
+          }
+
+          public async void AddConnection(string code) 
+          {
+               if (await server.AddConnection(code))
+               {
+                    Toast.MakeText(this, "Connection Added.", ToastLength.Short);
+               }
+               else
+               {
+                    OnAddConnectionButtonClick(null, null);
                }
           }
 

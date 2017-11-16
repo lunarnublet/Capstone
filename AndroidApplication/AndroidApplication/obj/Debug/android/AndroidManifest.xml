@@ -2,10 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="AndroidApplication.AndroidApplication" android:versionCode="1" android:versionName="1.0">
   <!--suppress UsesMinSdkAttributes-->
   <uses-sdk android:minSdkVersion="21" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
   <application android:allowBackup="true" android:label="@string/app_name" android:name="android.app.Application" android:debuggable="true">
-    <activity android:label="AndroidApplication" android:name="md56dd0d5cfd2731d57d0376a5afbaec448.MainActivity">
+    <activity android:label="AndroidApplication" android:theme="@android:style/Theme.NoTitleBar" android:name="md56dd0d5cfd2731d57d0376a5afbaec448.AddConnection" />
+    <activity android:label="Easy Upload" android:theme="@android:style/Theme.NoTitleBar" android:name="md56dd0d5cfd2731d57d0376a5afbaec448.MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />

@@ -15,6 +15,7 @@ using System.IO;
 using System.Net.NetworkInformation;
 using System.Collections.Specialized;
 using System.Web;
+using Android.Net;
 
 namespace AndroidApplication
 {
@@ -39,10 +40,17 @@ namespace AndroidApplication
                }
           }
 
-          public void AddConnection(string connectionCode) 
+          public bool IsOnline()
+          {
+               ConnectivityManager cm = (ConnectivityManager)caller.GetSystemService("connectivity");
+               NetworkInfo netInfo = cm.ActiveNetworkInfo;
+               return netInfo != null && netInfo.IsConnectedOrConnecting;
+          }
+
+          public async Task<bool> AddConnection(string connectionCode) 
           {
                string code = GetCode();
-               MakeAddConnectionCall(code, connectionCode);
+               return await MakeAddConnectionCall(code, connectionCode) == "Connection Added.";
           }
 
           public async Task<String> SendPhoto(string photo, int i) 
@@ -53,49 +61,54 @@ namespace AndroidApplication
                string photocode = "";
                bool isfinished = false;
                int totalsections = (photo.Length / maxChars) + 1;
-               int sectionon = 1;
+               int sectionon = 0;
 
-               if (photo.Length <= maxChars)
+               try
                {
-                    isfinished = true;
-                    caller.SetListViewText(i, "1/1");
-                    photocode = await MakeSendPhotoCall(code, photo, isfinished);
-
-               }
-               else 
-               {
-                    caller.SetListViewText(i, sectionon + "/" + totalsections);
-
-                    string substring = photo.Substring(index, maxChars);
-                    photocode = await MakeSendPhotoCall(code, substring, isfinished);
-                    index = maxChars;
-
-                    while (index <= photo.Length)
+                    if (photo.Length <= maxChars)
                     {
-                         ++sectionon;
-                         caller.SetListViewText(i, sectionon + "/" + totalsections);
-
-
-                         if (index + maxChars < photo.Length)
-                         {
-                              substring = photo.Substring(index, maxChars);
-                              isfinished = false;
-                         }
-                         else
-                         {
-                              substring = photo.Substring(index);
-                              isfinished = true;
-                         }
-                         await MakeAppendPhotoCall(photocode, substring, isfinished);
-                         index += maxChars;
+                         isfinished = true;
+                         caller.SetListViewText(i, "0/1");
+                         photocode = await MakeSendPhotoCall(code, photo, isfinished);
 
                     }
+                    else
+                    {
+                         caller.SetListViewText(i, sectionon + "/" + totalsections);
 
+                         string substring = photo.Substring(index, maxChars);
+                         photocode = await MakeSendPhotoCall(code, substring, isfinished);
+                         index = maxChars;
+
+                         while (index <= photo.Length)
+                         {
+                              ++sectionon;
+                              caller.SetListViewText(i, sectionon + "/" + totalsections);
+
+
+                              if (index + maxChars < photo.Length)
+                              {
+                                   substring = photo.Substring(index, maxChars);
+                                   isfinished = false;
+                              }
+                              else
+                              {
+                                   substring = photo.Substring(index);
+                                   isfinished = true;
+                              }
+                              await MakeAppendPhotoCall(photocode, substring, isfinished);
+                              index += maxChars;
+
+                         }
+
+                    }
+                    caller.SetListViewText(i, "DONE");
                }
-               caller.SetListViewText(i, "DONE");
-
-
-
+               catch (NullReferenceException e) 
+               {
+                    caller.SetListViewText(i, "CONNECTION ERROR");
+               }
+               
                return photocode;
           }
 
@@ -134,12 +147,20 @@ namespace AndroidApplication
                }
           }
 
-          private void MakeAddConnectionCall(string code, string connectionCode) 
+          private async Task<string> MakeAddConnectionCall(string code, string connectionCode) 
           {
                Dictionary<string, string> headers = new Dictionary<string, string>();
                headers.Add("phoneCode", code);
                headers.Add("desktopCode", connectionCode);
-               Call(url + "phoneaddconnection", headers, "");
+               try
+               {
+                    return await Call(url + "phoneaddconnection", headers, "");
+               }
+               catch (NullReferenceException e)
+               {
+                    Toast.MakeText(caller, "Connection Failed", ToastLength.Short);
+                    return "";
+               }
           }
 
           private async Task<string> MakeSendPhotoCall(string code, string photo, bool iscompleted)
@@ -147,25 +168,47 @@ namespace AndroidApplication
                Dictionary<string, string> headers = new Dictionary<string, string>();
                headers.Add("code", code);
                headers.Add("isfinished", iscompleted ? "1" : "0");
-               return await Call(url + "uploadphoto", headers, photo);
+               try
+               {
+                    return await Call(url + "uploadphoto", headers, photo);
+               }
+               catch (NullReferenceException e)
+               {
+                    throw e;
+               }
           }
           private async Task<string> MakeAppendPhotoCall(string photocode, string photo, bool iscompleted)
           {
                Dictionary<string, string> headers = new Dictionary<string, string>();
                headers.Add("photocode", photocode);
                headers.Add("isfinished", iscompleted ? "1" : "0");
-               return await Call(url + "appendphoto", headers, photo);
+               try
+               {
+                    return await Call(url + "appendphoto", headers, photo);
+               }
+               catch (NullReferenceException e) 
+               {
+                    throw e;
+               }
           }
 
           private async Task<string> MakeRegisterCall()
           {
                Dictionary<string, string> headers = new Dictionary<string, string>();
-               return await Call(url + "newphone", headers, "");
+
+               try
+               {
+                    return await Call(url + "newphone", headers, "");
+               }
+               catch (NullReferenceException e)
+               {
+                    return "";
+               }
           }
 
           private async Task<string> Call(string url, Dictionary<string, string> headers, string body)
           {
-               HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
+               HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(new System.Uri(url));
                request.Method = "POST";
                request.ContentType = "application/x-www-form-urlencoded";
                foreach (var key in headers.Keys)
@@ -180,6 +223,11 @@ namespace AndroidApplication
 
                string postdata = outgoingQueryString.ToString();
                int v = postdata.Length;
+
+               if (!IsOnline()) 
+               {
+                    throw new NullReferenceException();
+               }
 
                Stream requestStream = request.GetRequestStream();
                StreamWriter writer = new StreamWriter(requestStream);
@@ -199,41 +247,41 @@ namespace AndroidApplication
                }
           }
 
-          private async Task<string> Call(string url, Dictionary<string, string> headers, byte[] body)
-          {
-               // Create an HTTP web request using the URL:
-               HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
-               request.Method = "POST";
-               foreach (var key in headers.Keys)
-               {
-                    string value;
-                    headers.TryGetValue(key, out value);
-                    request.Headers[key] = value;
-               }
+          //private async Task<string> Call(string url, Dictionary<string, string> headers, byte[] body)
+          //{
+          //     // Create an HTTP web request using the URL:
+          //     HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
+          //     request.Method = "POST";
+          //     foreach (var key in headers.Keys)
+          //     {
+          //          string value;
+          //          headers.TryGetValue(key, out value);
+          //          request.Headers[key] = value;
+          //     }
 
 
-               Stream requestStream = request.GetRequestStream();
-               StreamWriter writer = new StreamWriter(requestStream);
-               writer.Write(body);
-               writer.Flush();
-               writer.Close();
+          //     Stream requestStream = request.GetRequestStream();
+          //     StreamWriter writer = new StreamWriter(requestStream);
+          //     writer.Write(body);
+          //     writer.Flush();
+          //     writer.Close();
 
-               // Send the request to the server and wait for the response:
-               using (WebResponse response = await request.GetResponseAsync())
-               {
-                    // Get a stream representation of the HTTP web response:
-                    using (Stream responseStream = response.GetResponseStream())
-                    {
-                         StreamReader reader = new StreamReader(responseStream);
-                         // Use this stream to build a JSON document object:
-                         string output = reader.ReadToEnd();
-                         caller.FindViewById<TextView>(Resource.Id.MyTextView).Text = output;
+          //     // Send the request to the server and wait for the response:
+          //     using (WebResponse response = await request.GetResponseAsync())
+          //     {
+          //          // Get a stream representation of the HTTP web response:
+          //          using (Stream responseStream = response.GetResponseStream())
+          //          {
+          //               StreamReader reader = new StreamReader(responseStream);
+          //               // Use this stream to build a JSON document object:
+          //               string output = reader.ReadToEnd();
+          //               caller.FindViewById<TextView>(Resource.Id.MyTextView).Text = output;
 
-                         // Return the JSON document:
-                         return output;
-                    }
-               }
-          }
+          //               // Return the JSON document:
+          //               return output;
+          //          }
+          //     }
+          //}
 
      }
 }

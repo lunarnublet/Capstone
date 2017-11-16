@@ -64,12 +64,17 @@ namespace Server.Controllers
                          Photo photo = new Photo();
                          photo.IsFinished = (isFinished == "1");
                          photo.DesktopId = desktop.Id;
-                         photo.FileName = DateTime.Now.ToFileTime().ToString() + ".txt";
+                         photo.FileName = DateTime.Now.ToFileTime().ToString();
                          string filepath = Server.MapPath("~/" + photo.FileName);
                          photo.Code = photocode;
                          ctx.Photos.Add(photo);
 
-                         WriteFile(filepath, body);
+                         WriteFile(filepath + "temp.txt", body);
+                         if (photo.IsFinished) 
+                         {
+                              EncryptFile(filepath + ".txt", filepath + "temp.txt");
+                              DeleteFile(filepath + "temp.txt");
+                         }
                     }
                     ctx.SaveChanges();
                }
@@ -96,8 +101,14 @@ namespace Server.Controllers
                     foreach (var photo in photos)
                     {
                          string filepath = Server.MapPath("~/" + photo.FileName);
-                         WriteFile(filepath, body);
+                         WriteFile(filepath + "temp.txt", body);
                          photo.IsFinished = (isFinished == "1");
+
+                         if (photo.IsFinished)
+                         {
+                              EncryptFile(filepath + ".txt", filepath + "temp.txt");
+                              DeleteFile(filepath + "temp.txt");
+                         }
                     }
 
                     ctx.SaveChanges();
@@ -176,7 +187,7 @@ namespace Server.Controllers
                          var photo = ctx.Photos.Where(s => s.DesktopId == desktop.Id && s.IsFinished).FirstOrDefault();
                          if (photo != null)
                          {
-                              string filepath = Server.MapPath("~/" + photo.FileName);
+                              string filepath = Server.MapPath("~/" + photo.FileName) + ".txt";
                               response = ReadFile(filepath);
                               ctx.Photos.Remove(photo);
                               DeleteFile(filepath);
@@ -204,8 +215,14 @@ namespace Server.Controllers
 
           private void WriteFile(string filepath, string content)
           {
-               byte[] bytes = Encoding.ASCII.GetBytes(content);
-               EncryptFile(bytes, filepath);
+
+               FileStream filestream = new FileStream(filepath, FileMode.Append);
+               StreamWriter writer = new StreamWriter(filestream);
+               writer.Write(content);
+               writer.Flush();
+               writer.Close();
+               filestream.Close();
+               
           }
 
           private byte[] DecryptFile(string filepath)
@@ -236,15 +253,15 @@ namespace Server.Controllers
 
           }
 
-          private void EncryptFile(byte[] data, string filepath)
+          private void EncryptFile(string encrypted, string file)
           {
 
                string password = @"myKey123"; // Your Key Here
                UnicodeEncoding UE = new UnicodeEncoding();
                byte[] key = UE.GetBytes(password);
 
-               string cryptFile = filepath;
-               FileStream fsCrypt = new FileStream(cryptFile, FileMode.Create);
+               string cryptFile = encrypted;
+               FileStream fsCrypt = new FileStream(cryptFile, FileMode.OpenOrCreate);
 
                RijndaelManaged RMCrypto = new RijndaelManaged();
 
@@ -252,13 +269,15 @@ namespace Server.Controllers
                    RMCrypto.CreateEncryptor(key, key),
                    CryptoStreamMode.Write);
 
+               FileStream fileToEncrypt = new FileStream(file, FileMode.Open);
 
-               foreach (byte byt in data)
+               int data;
+               while((data = fileToEncrypt.ReadByte()) != -1)
                {
-                    cs.WriteByte(byt);
+                    cs.WriteByte((byte)data);
                }
 
-
+               fileToEncrypt.Close();
                cs.Close();
                fsCrypt.Close();
           }

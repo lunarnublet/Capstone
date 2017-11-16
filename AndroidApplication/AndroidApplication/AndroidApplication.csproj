@@ -55,6 +55,7 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddConnection.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MyListView.cs" />
     <Compile Include="MyListViewAdapter.cs" />
@@ -68,6 +69,9 @@
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
     <AndroidResource Include="Resources\layout\ListView_Row.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\AddConnection.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

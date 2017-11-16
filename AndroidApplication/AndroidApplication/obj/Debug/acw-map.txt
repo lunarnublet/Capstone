@@ -1,3 +1,7 @@
+AndroidApplication.AddConnection, AndroidApplication;md56dd0d5cfd2731d57d0376a5afbaec448.AddConnection
+AndroidApplication.AddConnection, AndroidApplication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md56dd0d5cfd2731d57d0376a5afbaec448.AddConnection
+AndroidApplication.AddConnection;md56dd0d5cfd2731d57d0376a5afbaec448.AddConnection
+androidapplication.AddConnection;md56dd0d5cfd2731d57d0376a5afbaec448.AddConnection
 AndroidApplication.MainActivity, AndroidApplication;md56dd0d5cfd2731d57d0376a5afbaec448.MainActivity
 AndroidApplication.MainActivity, AndroidApplication, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md56dd0d5cfd2731d57d0376a5afbaec448.MainActivity
 AndroidApplication.MainActivity;md56dd0d5cfd2731d57d0376a5afbaec448.MainActivity

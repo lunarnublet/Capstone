@@ -39,6 +39,8 @@ namespace DesktopApp
                }
           }
 
+          public string Code { get { return code; } }
+
 
           public Server(MainWindow host) 
           {
@@ -91,21 +93,22 @@ namespace DesktopApp
           {
                FileStream file = new FileStream(existingDirectoriesName, FileMode.Truncate);
                StreamWriter writer = new StreamWriter(file);
-               foreach (var item in ExistingDirs) 
+               foreach (var item in ExistingDirs)
                {
                     writer.Write(item);
-                    if (item != ExistingDirs.Last()) 
+                    if (item != ExistingDirs.Last())
                     {
                          writer.Write(',');
                     }
                }
+               //writer.Write("");
                writer.Flush();
                writer.Close();
           }
 
           public void AddDirectory(string directory) 
           {
-               if (!ExistingDirs.Contains(directory)) 
+               if (ExistingDirs.Where(s => s.ToLower() == directory.ToLower()).SingleOrDefault() == null) 
                {
                     ExistingDirs.Add(directory);
                     SaveDirs();
@@ -120,6 +123,13 @@ namespace DesktopApp
                     return true;
                }
                return false;
+          }
+
+          public int GetIndexOf(string directory) 
+          {
+               string found = ExistingDirs.Where(s => s.ToLower() == directory.ToLower()).SingleOrDefault();
+               return found != null ? ExistingDirs.IndexOf(found) : -1;
+               
           }
 
           private void StartAliveCalls()

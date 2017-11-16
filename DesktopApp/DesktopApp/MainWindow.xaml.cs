@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,6 +27,7 @@ namespace DesktopApp
      {
           Server server;
           public bool NewImage;
+          public Dictionary<Image, string> imageDictionary;
 
 
           public MainWindow()
@@ -32,6 +35,7 @@ namespace DesktopApp
                InitializeComponent();
                this.Focusable = true;
                server = new Server(this);
+               imageDictionary = new Dictionary<Image, string>();
                server.OnStart();
                DisplayFileImages();
                NewImage = true;
@@ -46,6 +50,10 @@ namespace DesktopApp
                FilePathTextBox.KeyDown += FilePathTextBox_KeyDown;
 
 
+
+               Code.Content = server.Code;
+
+
                //System.Windows.Data.Binding b = new System.Windows.Data.Binding("M");
                //b.Source = eventListView;
                //b.Path = new PropertyPath(cell.Width);
@@ -54,9 +62,26 @@ namespace DesktopApp
                //cell.SetBinding(ListView.ActualWidthProperty, b);
           }
 
+          private void ToggleCodeClick(object sender, RoutedEventArgs e)
+          {
+               if (Code.Visibility == Visibility.Hidden)
+               {
+                    Code.Visibility = Visibility.Visible;
+               }
+               else
+               {
+                    Code.Visibility = Visibility.Hidden;
+               }
+          }
+
           private void ListDirectories_SelectionChanged(object sender, SelectionChangedEventArgs e)
           {
-               string s = server.ExistingDirs[ListDirectories.SelectedIndex];
+               int index = 0;
+               if (ListDirectories.SelectedIndex > 0) 
+               {
+                    index = ListDirectories.SelectedIndex;
+               }
+               string s = server.ExistingDirs[index];
                ChangeDirectory(s);
           }
 
@@ -72,7 +97,7 @@ namespace DesktopApp
 
           private void CompositionTarget_Rendering(object sender, EventArgs e)
           {
-               if (NewImage) 
+               if (NewImage)
                {
                     Refresh();
                     NewImage = false;
@@ -86,7 +111,7 @@ namespace DesktopApp
 
           private void FilePathTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
           {
-               if (e.Key == Key.Enter) 
+               if (e.Key == Key.Enter)
                {
                     ChangeDirectory(FilePathTextBox.Text);
                }
@@ -94,7 +119,7 @@ namespace DesktopApp
 
           private void FilePathTextBox_LostFocus(object sender, RoutedEventArgs e)
           {
-               if (FilePathTextBox.Text == "") 
+               if (FilePathTextBox.Text == "")
                {
                     FilePathTextBox.Text = "Ex. 'D:\\YourFolderName'";
                }
@@ -120,7 +145,7 @@ namespace DesktopApp
                ChangeDirectory(filepath);
           }
 
-          private void ChangeDirectory(string directory) 
+          private void ChangeDirectory(string directory)
           {
                if (Directory.Exists(directory))
                {
@@ -128,6 +153,8 @@ namespace DesktopApp
                     server.SavePath = directory;
                     server.AddDirectory(directory);
                     Refresh();
+                    int index = server.GetIndexOf(directory);
+                    ListDirectories.SelectedIndex = index == -1 ? 0 : index;
                }
                else
                {
@@ -151,36 +178,63 @@ namespace DesktopApp
                }
           }
 
-          private void RefreshClick(object sender, RoutedEventArgs e) 
+          private void RefreshClick(object sender, RoutedEventArgs e)
           {
                Refresh();
           }
 
-          private void Refresh() 
+          private void Refresh()
           {
                ImagePanel.Children.Clear();
+               imageDictionary.Clear();
                DisplayFileImages();
           }
 
-          private void DisplayFileImages() 
+          private void DisplayFileImages()
           {
                string searchpattern = "*.*";
                string path = server.SavePath;
                var files = Directory.GetFiles(path, searchpattern, SearchOption.TopDirectoryOnly).Where(s => s.EndsWith(".jpg") || s.EndsWith(".png"));
-               foreach (string filename in files) 
+               foreach (string filename in files)
                {
                     AddImageToImagePanel(new Uri(filename));
                }
           }
 
-          private void AddImageToImagePanel(Uri uri) 
+          private void AddImageToImagePanel(Uri uri)
           {
                Image image = new Image();
                image.Width = 100;
                image.Height = 100;
                image.Margin = new Thickness(5);
                image.Source = new BitmapImage(uri);
+               image.MouseLeftButtonDown += Image_MouseLeftButtonDown;
                ImagePanel.Children.Add(image);
+               imageDictionary.Add(image, uri.AbsolutePath);
           }
+
+          private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+          {
+               if (e.ClickCount == 2) 
+               {
+                    Image image = (Image)sender;
+                    string path = "";
+                    imageDictionary.TryGetValue(image, out path);
+                    if (path != "") 
+                    {
+                         try
+                         {
+                              System.Diagnostics.Process.Start(path);
+
+                         }
+                         catch (Exception ex) 
+                         {
+                         
+                         }
+                    }
+               }
+
+          }
+
      }
 }

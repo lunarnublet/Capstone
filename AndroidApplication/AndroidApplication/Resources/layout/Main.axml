@@ -4,30 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minWidth="25px"
-    android:minHeight="25px">
+    android:minHeight="25px"
+    >
      <Button
           android:id="@+id/SelectPhotoButton"
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           android:text="Pick Image"
-      />
-     <TextView
-          android:id="@+id/MyTextView"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:text="Nothing Yet"
-      />
-     <Button
-          android:id="@+id/AddConnectionButton"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:text="Add Connection"
-      />
-     <EditText
-          android:id="@+id/MyEditText"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:text="Nothing Yet"
+          android:layout_weight="0"
       />
 
      <!--<ImageView
@@ -36,10 +20,26 @@
           android:layout_height="wrap_content"
       />-->
 
-     <ListView 
+     <ListView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:id="@+id/mylistview"
+          android:layout_weight="2"
      />
+
+     <LinearLayout
+          android:layout_height="0dp"
+          android:layout_width="match_parent"
+          android:layout_weight="3"
+          android:gravity="center|bottom"
+     >
+          <Button
+               android:id="@+id/AddConnectionButton"
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:text="Add Connection"
+          />
+     </LinearLayout>
+
 
 </LinearLayout>
