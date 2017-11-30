@@ -2,13 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="300dp" >
+    android:layout_height="wrap_content" 
+    android:background="#606060"
+    >
 
      <EditText
       android:id="@+id/CodeEditText"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:hint="Enter The Desktop Code..."
+      android:background="@drawable/Button"
+      style="@style/edittext_text"
       />
 
      <Button
@@ -16,6 +20,8 @@
           android:layout_width="fill_parent"
           android:layout_height="wrap_content"
           android:text="Add"
+          android:background="@drawable/Button"
+          style="@style/button_text"
      />
 
 </LinearLayout>

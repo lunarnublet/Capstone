@@ -6,8 +6,8 @@
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
   <application android:allowBackup="true" android:label="@string/app_name" android:name="android.app.Application" android:debuggable="true">
-    <activity android:label="AndroidApplication" android:theme="@android:style/Theme.NoTitleBar" android:name="md56dd0d5cfd2731d57d0376a5afbaec448.AddConnection" />
-    <activity android:label="Easy Upload" android:theme="@android:style/Theme.NoTitleBar" android:name="md56dd0d5cfd2731d57d0376a5afbaec448.MainActivity">
+    <activity android:label="Easy Upload" android:screenOrientation="portrait" android:theme="@android:style/Theme.Holo.Dialog.NoActionBar" android:name="md56dd0d5cfd2731d57d0376a5afbaec448.AddConnection" />
+    <activity android:label="Easy Upload" android:screenOrientation="portrait" android:theme="@style/MyTheme" android:name="md56dd0d5cfd2731d57d0376a5afbaec448.MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />

@@ -15,10 +15,14 @@ using Java.Nio;
 using Android.Runtime;
 using System.Text;
 using System.IO.Compression;
+using Android.Graphics.Drawables;
+using Android.Content.Res;
+using Android.Views;
+using Android.Content.PM;
 
 namespace AndroidApplication
 {
-     [Activity(Label = "Easy Upload", MainLauncher = true, Theme = "@android:style/Theme.NoTitleBar")]
+     [Activity(Label = "Easy Upload", MainLauncher = true, Theme ="@style/MyTheme", ScreenOrientation = ScreenOrientation.Portrait)]
      public class MainActivity : Activity
      {
           public static readonly int PickImageId = 1000;
@@ -36,6 +40,10 @@ namespace AndroidApplication
 
                // Set our view from the "main" layout resource
                SetContentView(Resource.Layout.Main);
+               var toolbar = FindViewById<Android.Widget.Toolbar>(Resource.Id.toolbar);
+               toolbar.SetTitleTextColor(Android.Graphics.Color.Argb(255, 0, 187, 255));
+               SetActionBar(toolbar);
+               ActionBar.Title = "Easy Upload";
                Button selectPhoto = FindViewById<Button>(Resource.Id.SelectPhotoButton);
                Button addConnection = FindViewById<Button>(Resource.Id.AddConnectionButton);
                listView = FindViewById<ListView>(Resource.Id.mylistview);
@@ -53,16 +61,16 @@ namespace AndroidApplication
                server.OnStart();
           }
 
-          private void ListView_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
-          {
-               int position = listView.SelectedItemPosition;
-               Android.Net.Uri uri = adapter[position].Item1;
+          //private void ListView_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+          //{
+          //     int position = listView.SelectedItemPosition;
+          //     Android.Net.Uri uri = adapter[position].Item1;
 
-               string s = ToBase64String(uri);
-               server.SendPhoto(s, position);
+          //     string s = ToBase64String(uri);
+          //     server.SendPhoto(s, position);
 
 
-          }
+          //}
 
           private void OnSelectPhotoButtonClick(object sender, EventArgs eventArgs)
           {
@@ -114,12 +122,24 @@ namespace AndroidApplication
           {
                if (await server.AddConnection(code))
                {
-                    Toast.MakeText(this, "Connection Added.", ToastLength.Short);
+                    MakeToast("Connection Added.");
+
                }
                else
                {
-                    OnAddConnectionButtonClick(null, null);
+                    MakeToast("Failed To Add Connection.");
                }
+          }
+
+          public void MakeToast(string message) 
+          {
+               Toast toast = Toast.MakeText(this, message, ToastLength.Short);
+               View view = toast.View;
+               view.SetBackgroundResource(Resource.Drawable.Label);
+               
+               TextView text = (TextView)view.FindViewById<TextView>(Android.Resource.Id.Message);
+               text.SetTextColor(Android.Graphics.Color.Argb(255, 0, 187, 255));
+               toast.Show();
           }
 
           //private void AddCellsToListView(List<Android.Net.Uri> imageUris)
@@ -139,11 +159,11 @@ namespace AndroidApplication
           //     }
           //}
 
-          public void ConvertUris()
+          public async void ConvertUris()
           {
                for( int i = 0; i < uris.Count; ++i)
                {
-                    string s = ToBase64String(uris[i]);
+                    string s = await ToBase64String(uris[i]);
                     int pos = adapter.Add(uris[i]);
                     adapter.NotifyDataSetChanged();
 
@@ -156,11 +176,11 @@ namespace AndroidApplication
                adapter.ChangeMessage(position, message);
           }
 
-          private void UnzipAndDisplayImage(byte[] bytes)
-          {
-               string base64 = Unzip(bytes);
-               DisplayImage(base64);
-          }
+          //private void UnzipAndDisplayImage(byte[] bytes)
+          //{
+          //     string base64 = Unzip(bytes);
+          //     DisplayImage(base64);
+          //}
 
           private void DisplayImage(string image) 
           {
@@ -168,22 +188,10 @@ namespace AndroidApplication
                Bitmap bitmap = BitmapFactory.DecodeByteArray(imagebytes, 0, imagebytes.Length);
           }
 
-          public string ToBase64String(Android.Net.Uri uri)
+          public async Task<string> ToBase64String(Android.Net.Uri uri)
           {
                string output = "";
                Bitmap bitmap = MediaStore.Images.Media.GetBitmap(this.ContentResolver, uri);
-               //ByteBuffer buffer = ByteBuffer.Allocate(bitmap.ByteCount);
-               //bitmap.CopyPixelsToBuffer(buffer);
-               //buffer.Rewind();
-
-               //IntPtr classHandle = JNIEnv.FindClass("java/nio/ByteBuffer");
-               //IntPtr methodId = JNIEnv.GetMethodID(classHandle, "array", "()[B");
-               //IntPtr resultHandle = JNIEnv.CallObjectMethod(buffer.Handle, methodId);
-               //byte[] bytes = JNIEnv.GetArray<byte>(resultHandle);
-               //JNIEnv.DeleteLocalRef(resultHandle);
-
-               //output = Convert.ToBase64String(bytes);
-               //int v = output.Length;
 
                using (var stream = new MemoryStream())
                {
@@ -197,56 +205,56 @@ namespace AndroidApplication
                return output;
           }
 
-          public byte[] ToZippedByteArray(Android.Net.Uri uri)
-          {
-               string s = ToBase64String(uri);
-               byte[] output = Zip(s);
-               return output;
-          }
+          //public byte[] ToZippedByteArray(Android.Net.Uri uri)
+          //{
+          //     string s = ToBase64String(uri);
+          //     byte[] output = Zip(s);
+          //     return output;
+          //}
 
-          public static void CopyTo(Stream src, Stream dest)
-          {
-               byte[] bytes = new byte[4096];
+          //public static void CopyTo(Stream src, Stream dest)
+          //{
+          //     byte[] bytes = new byte[4096];
 
-               int cnt;
+          //     int cnt;
 
-               while ((cnt = src.Read(bytes, 0, bytes.Length)) != 0)
-               {
-                    dest.Write(bytes, 0, cnt);
-               }
-          }
+          //     while ((cnt = src.Read(bytes, 0, bytes.Length)) != 0)
+          //     {
+          //          dest.Write(bytes, 0, cnt);
+          //     }
+          //}
 
-          public static byte[] Zip(string str)
-          {
-               var bytes = Encoding.UTF8.GetBytes(str);
+          //public static byte[] Zip(string str)
+          //{
+          //     var bytes = Encoding.UTF8.GetBytes(str);
 
-               using (var msi = new MemoryStream(bytes))
-               using (var mso = new MemoryStream())
-               {
-                    using (var gs = new GZipStream(mso, CompressionMode.Compress))
-                    {
-                         //msi.CopyTo(gs);
-                         CopyTo(msi, gs);
-                    }
+          //     using (var msi = new MemoryStream(bytes))
+          //     using (var mso = new MemoryStream())
+          //     {
+          //          using (var gs = new GZipStream(mso, CompressionMode.Compress))
+          //          {
+          //               //msi.CopyTo(gs);
+          //               CopyTo(msi, gs);
+          //          }
 
-                    return mso.ToArray();
-               }
-          }
+          //          return mso.ToArray();
+          //     }
+          //}
 
-          public static string Unzip(byte[] bytes)
-          {
-               using (var msi = new MemoryStream(bytes))
-               using (var mso = new MemoryStream())
-               {
-                    using (var gs = new GZipStream(msi, CompressionMode.Decompress))
-                    {
-                         //gs.CopyTo(mso);
-                         CopyTo(gs, mso);
-                    }
+          //public static string Unzip(byte[] bytes)
+          //{
+          //     using (var msi = new MemoryStream(bytes))
+          //     using (var mso = new MemoryStream())
+          //     {
+          //          using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+          //          {
+          //               //gs.CopyTo(mso);
+          //               CopyTo(gs, mso);
+          //          }
 
-                    return Encoding.UTF8.GetString(mso.ToArray());
-               }
-          }
+          //          return Encoding.UTF8.GetString(mso.ToArray());
+          //     }
+          //}
 
           public static List<Android.Net.Uri> ToList(ClipData clipData)
           {

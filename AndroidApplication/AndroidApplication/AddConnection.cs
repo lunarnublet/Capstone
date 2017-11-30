@@ -9,10 +9,11 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Content.PM;
 
 namespace AndroidApplication
 {
-     [Activity(Label = "AndroidApplication", MainLauncher = false, Theme = "@android:style/Theme.NoTitleBar")]
+     [Activity(Label = "Easy Upload", MainLauncher = false, Theme = "@android:style/Theme.Holo.Dialog.NoActionBar", ScreenOrientation = ScreenOrientation.Portrait)]
      class AddConnection : Activity
      {
           Button addButton;
